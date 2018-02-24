@@ -47,14 +47,16 @@ The 4th case describes the setup when the diagonals are as follows:
   * e joins the 1st and 3rd vertices,
   * f joins the 0th and 2nd vertices,
   * g joins the 1st and 4th vertices.
+
 Now by considering the intersection of d and e (that is, point R), and f and g
 (that is, point S), the distance of R and S can be expressed either by
-the equation d^2-3*d+1=0 or d^2+3*d+1=0. This means that RS must be
+the equation `d^2-3*d+1=0` or `d^2+3*d+1=0`. This means that RS must be
 one of the following numbers:
   * 1/2*(-sqrt(5)+3)
   * 1/2*(sqrt(5)+3)
   * 1/2*(-sqrt(5)-3)
   * 1/2*(sqrt(5)-3)
+
 The last two ones are negative numbers, that is, they must be excluded.
 But the first two possibilities are indeed possible, the first one
 occurs in the standard case, and the second one for a regular star pentagon.
@@ -62,4 +64,5 @@ occurs in the standard case, and the second one for a regular star pentagon.
 ## Issues
 
   * Note that for bigger n the computations may be slow, or some computation steps may be timed out.
-  * Use the console of your browser by pressing F12 on the startup to get more information on the progress. The HTML page may not be refreshed properly.
+  * Use the console of your browser by pressing F12 on the startup to get more information on the progress.
+The HTML page may not be refreshed properly.
