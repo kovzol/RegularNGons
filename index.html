@@ -1,0 +1,279 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>
+    Webxcas
+  </title>
+    <style>
+      .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
+      canvas.emscripten { border: 1px solid black; }
+      textarea.emscripten { font-family: monospace; width: 80%; }
+      div.emscripten { text-align: center; }
+
+    </style>
+</head>
+<body onload="go()">
+
+    <div class="emscripten" id="status">Downloading...</div>
+    <div class="emscripten">
+      <progress value="0" max="100" id="progress" hidden=1></progress>  
+    </div>
+    <textarea class="emscripten" id="output" rows="20" cols="80"></textarea>
+
+  <script type='text/javascript'>
+    function compute(inputString) { // compute a Giac command and return the output
+        caseval = Module.cwrap('caseval', 'string', ['string']);
+        return caseval(inputString);
+    }
+
+    // https://css-tricks.com/snippets/javascript/get-url-variables/
+    function getQueryVariable(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
+
+    function good(a,b,c,d) {
+        if (a==b || a==c || a==d || b == c || b == d || c == d) {
+            return false;
+        }
+        if (a>=n || b >= n || c>=n || d>=n) {
+            return false;
+        }
+        var j;
+        var es = efghlist.length;
+        for (j=0; j<es; ++j) {
+            if (efghlist[j] == c + "," + d + "," + a + "," + b)
+                return false;
+        }
+        return true;
+    }
+
+    function go() {
+        n = getQueryVariable("n");
+        cd = (n-2)*(n-3)/2-(n-4);
+        efgh = n*(n-1)/2* (n-2)*(n-3)/2 /2;
+        smax = (n-4)*cd*efgh;
+        if (typeof s === 'undefined') {
+            s = getQueryVariable("s");
+            output("Starting RegularNGons with n=" + n + ", s=" + s);
+            output("s will be incremented until " + smax);
+        }
+        if (s<0 || s>=smax) errorOutput("Invalid s: " + s);
+        A = 0;
+        var Bpos = s;
+        var Bmax = n-4;
+        var Bslice = smax/Bmax;
+        B = Math.floor(Bpos/Bslice);
+        var CDpos = Bpos - B * Bslice;
+        B += 2;
+        console.log("A = 0");
+        console.log("B = " + B);
+        var CDmax = cd;
+        var CDslice = Bslice/CDmax;
+        var CD = Math.floor(CDpos/CDslice);
+        console.log("Bpos = " + Bpos + ", Bmax = " + Bmax + ", Bslice = "
+             + Bslice + ", CDpos = " + CDpos + ", CDmax = " + CDmax
+             + ", CDslice = " + CDslice);
+        console.log("CD = " + CD);
+
+        C = 1;
+        D = C+1;
+        CDsave = CD;
+        while (CD > -1) {
+            if (D<n-1) D++;
+            else {
+                C++;
+                D = C+2;
+            }
+            // is C=B or D=B?
+            if (C==B) {
+                C++;
+                D++;
+            }
+            if (D==B) {
+                D++;
+            }
+            console.log("Considering C = " + C + ", D = " + D);
+            if (B-A != C-D) {
+                console.log("B-A = " + (B-A)+ ", C-D = " + (C-D) + " normal case, allowed");
+                CD--;
+            } else {
+                console.log("B-A = " + (B-A)+ ", C-D = " + (C-D) + " parallel case, disallowed");
+            }
+        }
+        CD = CDsave;
+        console.log("C = " + C + ", D = " + D);
+
+        var EFGHpos = CDpos - CD * CDslice;
+        var EFGHmax = efgh;
+        var EFGHslice = CDslice/EFGHmax;
+        var EFGH = Math.floor(EFGHpos/EFGHslice);
+        console.log("EFGHpos = " + EFGHpos + ", EFGHmax = " + EFGHmax + ", EFGHslice = "
+           + EFGHslice);
+        console.log("EFGH = " + EFGH);
+
+        EFGHsave = EFGH;
+        var i = 0;
+        efghlist = [];
+        loop:
+        for (E=0; E<n; E++)
+            for (F=E+1; F<n; F++)
+                for (G=0; G<n; G++)
+                    for (H=G+1; H<n; H++) {
+                        if (good(E,F,G,H)) {
+                            EFGH--;
+                            efghlist[i] = E + "," + F + "," + G + "," + H;
+                            ++i;
+                        }
+                        if (EFGH<0) break loop;
+                    }
+        EFGH = EFGHsave;
+        console.log("A = " + A + ", B = " + B + ", C = " + C + ", D = " + D + ", E = " + E + ", F = " + F + ", G = " + G + ", H = " + H);
+    }
+
+    function CASinitCommands() {
+        var factorsqrfree = "factorsqrfree(p):=begin local pf,r,ii; pf:=factor(p); if (sommet(pf)!='*') begin if (sommet(pf)=='^') return op(pf)[0]; else begin if (sommet(pf)!=sommet(-x)) return pf; else return factorsqrfree(-pf); end; end; opf:=op(pf); r:=1; for ii from 0 to size(opf)-1 do r:=r*factorsqrfree(opf[ii]); od return r end";
+        var cos2piOverNMinpoly = "cos2piOverNMinpoly(n):=begin local j, p, q, r; p:=simplify((tchebyshev1(n)-1)/(x-1)); for j from 1 to n/2 do q:=tchebyshev1(j)-1; r:=gcd(p,q); p:=simplify(p/r); od; return factorsqrfree(primpart(p)); end";
+        compute("caseval(\"init geogebra\");");
+        compute(factorsqrfree);
+        compute(cos2piOverNMinpoly);
+    }
+
+    function doCAScomputation() {
+        CASinitCommands();
+        while (s<smax-1) {
+            CAScomputeCurrent();
+            s++;
+            go();
+        }
+        output("Finished")
+    }
+
+    function output(text) {
+        console.log("OUTPUT: " + text);
+        var element = document.getElementById('output');
+        var oldValue = element.value;
+        element.value = oldValue + text + "\n";
+        element.scrollTop = 99999;
+    }
+
+    function errorOutput(text) {
+        output(text);
+        throw(text);
+    }
+
+    function CAScomputeCurrent() {
+        // c=cos(2pi/n)
+        // console.log("CAS computes n=" + n + ", s=" + s);
+        var c = compute("subst(cos2piOverNMinpoly(" + n + "),[x=c]);");
+        // s=sin(2pi/n)
+        var s_ = "s^2+c^2-1";
+        // A=0
+        var d = "ax,ay";
+        // P0=(0,0), P1=(1,0)
+        var p = "p0x,p0y,p1x-1,p1y";
+        var maxindex = Math.max(B,C,D,E,F,G,H);
+        var v = "c,s,ax,ay,bx,b_y,cx,cy,dx,dy,ex,ey,fx,fy,gx,gy,hx,hy,qx,qy,rx,ry";
+        // defining vertex points and segment endpoints
+        for (i=0; i<=maxindex; ++i) {
+            var px = "p" + i + "x";
+            var py = "p" + i + "y";
+            v += "," + px + "," + py;
+            if (i>1) {
+                var ppx = "p" + (i - 1) + "x";
+                var ppy = "p" + (i - 1) + "y";
+                var pppx = "p" + (i - 2) + "x";
+                var pppy = "p" + (i - 2) + "y";
+                p += ",-" + px + "-s*" + ppy + "+" + ppx + "+c*" + ppx + "+s*" + pppy + "-c*" + pppx;
+                p += ",-" + py + "+" + ppy + "+c*" + ppy + "+s*" + ppx + "-c*" + pppy + "-s*" + pppx;
+            }
+            if (B==i) d += ",bx-" + px + ",b_y-" + py;
+            if (C==i) d += ",cx-" + px + ",cy-" + py;
+            if (D==i) d += ",dx-" + px + ",dy-" + py;
+            if (E==i) d += ",ex-" + px + ",ey-" + py;
+            if (F==i) d += ",fx-" + px + ",fy-" + py;
+            if (G==i) d += ",gx-" + px + ",gy-" + py;
+            if (H==i) d += ",hx-" + px + ",hy-" + py;
+        }
+        // AQB, CQD are collinear:
+        var q="ax*qy+qx*b_y+bx*ay-ax*b_y-qx*ay-bx*qy,cx*qy+qx*dy+dx*cy-cx*dy-qx*cy-dx*qy";
+        // ERF, GRH are collinear:
+        var r="ex*ry+rx*fy+fx*ey-ex*fy-rx*ey-fx*ry,gx*ry+rx*hy+hx*gy-gx*hy-rx*gy-hx*ry";
+        // the requested length is QR=d
+        var qr="d^2-(qx-rx)^2-(qy-ry)^2";
+        var ideal=c+","+s_+","+p+","+d+","+q+","+r+","+qr;
+        var eliminatecommand = "eliminate([" + ideal + "],[" + v + "]);"
+        var eliminate = compute(eliminatecommand);
+        var factorscommand = "factors(" + eliminate + ");"
+        var factors = compute(factorscommand);
+        var factor1command = factors + "[0][0]";
+        var factor1 = compute(factor1command);
+        // don't consider d=0
+        if (factor1 != "d") {
+            var degreecommand = "degree(" + factors + "[0][0]);"
+            var degree = compute(degreecommand);
+            var deg = Number(degree);
+            if (deg > 0 && deg < 3) {
+                var factorcommand = "factor(" + eliminate + ");"
+                var factor = compute(factorcommand);
+                output("n=" + n + ", s=" + s + ": A=" + A + ", B=" + B + ", C=" + C +
+                    ", D=" + D + ", E=" + E + ", F=" + F + ", G=" + G + ", H=" + H + ": " + factor);
+            }
+        }
+    }
+
+    </script>
+
+  <script type='text/javascript'>
+      var Module = {
+        preRun: [],
+        postRun: [],
+        printErr: function(text) {
+          if (0) { // XXX disabled for safety typeof dump == 'function') {
+            dump(text + '\n'); // fast, straight to the real console
+          } else {
+            console.log(text);
+          }
+        },
+        setStatus: function(text) {
+          if (Module.setStatus.interval) clearInterval(Module.setStatus.interval);
+          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+          var statusElement = document.getElementById('status');
+          var progressElement = document.getElementById('progress');
+          if (m) {
+            text = m[1];
+            progressElement.value = parseInt(m[2])*100;
+            progressElement.max = parseInt(m[4])*100;
+            progressElement.hidden = false;
+          } else {
+            progressElement.value = null;
+            progressElement.max = null;
+            progressElement.hidden = true;
+          }
+          statusElement.innerHTML = text;
+          console.log("Giac status = " + text);
+          if (text == "") { // ready to go
+              // go();
+              doCAScomputation();
+          }
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+        }
+      };
+      Module.setStatus('Downloading...');
+    </script>      
+  <script src="giac.js"></script>
+
+</body>
+</html>
+
