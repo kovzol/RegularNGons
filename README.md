@@ -1,6 +1,6 @@
 # RegularNGons
 
-Find new theorems in Euclidean elementary plane geometry by observing distances
+Find new theorems in elementary plane geometry by observing distances
 between intersections of diagonals of a regular polygon.
 
 Given a regular polygon and four diagonals d, e, f and g of it.
