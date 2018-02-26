@@ -3,7 +3,7 @@
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>
-    Webxcas
+    RegularNGons
   </title>
     <style>
       .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
@@ -17,7 +17,7 @@
 
     <div class="emscripten" id="status">Downloading...</div>
     <div class="emscripten">
-      <progress value="0" max="100" id="progress" hidden=1></progress>  
+      <progress value="0" max="100" id="progress" hidden="1"></progress>
     </div>
     <textarea class="emscripten" id="output" rows="20" cols="80"></textarea>
 
@@ -57,13 +57,26 @@
 
     function go() {
         n = getQueryVariable("n");
+        if (!n) errorOutput("Please append n=... to the URL");
+        if (n<5) errorOutput("Invalid n: " + n + " (please use a number >= 5)");
         cd = (n-2)*(n-3)/2-(n-4);
         efgh = n*(n-1)/2* (n-2)*(n-3)/2 /2;
         smax = (n-4)*cd*efgh;
+        // on startup
         if (typeof s === 'undefined') {
             s = getQueryVariable("s");
+            if (!s) {
+                output("Assuming s=0, please append s=... to the URL to override");
+                s=0;
+            }
             output("Starting RegularNGons with n=" + n + ", s=" + s);
-            output("s will be incremented until " + smax);
+            output("s can be incremented until " + smax);
+            e = getQueryVariable("e");
+            if (e) {
+                output("Computation will stop at " + e);
+            } else {
+                e = smax;
+            }
         }
         if (s<0 || s>=smax) errorOutput("Invalid s: " + s);
         A = 0;
@@ -148,7 +161,7 @@
 
     function doCAScomputation() {
         CASinitCommands();
-        while (s<smax-1) {
+        while (s<e-1) {
             CAScomputeCurrent();
             s++;
             go();
@@ -209,19 +222,19 @@
         // the requested length is QR=d
         var qr="d^2-(qx-rx)^2-(qy-ry)^2";
         var ideal=c+","+s_+","+p+","+d+","+q+","+r+","+qr;
-        var eliminatecommand = "eliminate([" + ideal + "],[" + v + "]);"
+        var eliminatecommand = "eliminate([" + ideal + "],[" + v + "]);";
         var eliminate = compute(eliminatecommand);
-        var factorscommand = "factors(" + eliminate + ");"
+        var factorscommand = "factors(" + eliminate + ");";
         var factors = compute(factorscommand);
         var factor1command = factors + "[0][0]";
         var factor1 = compute(factor1command);
         // don't consider d=0
         if (factor1 != "d") {
-            var degreecommand = "degree(" + factors + "[0][0]);"
+            var degreecommand = "degree(" + factors + "[0][0]);";
             var degree = compute(degreecommand);
             var deg = Number(degree);
             if (deg > 0 && deg < 3) {
-                var factorcommand = "factor(" + eliminate + ");"
+                var factorcommand = "factor(" + eliminate + ");";
                 var factor = compute(factorcommand);
                 output("n=" + n + ", s=" + s + ": A=" + A + ", B=" + B + ", C=" + C +
                     ", D=" + D + ", E=" + E + ", F=" + F + ", G=" + G + ", H=" + H + ": " + factor);
