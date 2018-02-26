@@ -1,0 +1,2 @@
+convert -scale 15% pentagon.png png:pentagon-small.png
+convert -scale 7% star-pentagon.png png:star-pentagon-small.png

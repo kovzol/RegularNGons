@@ -70,6 +70,7 @@
                 s=0;
             }
             output("Starting RegularNGons with n=" + n + ", s=" + s);
+            startTime = new Date();
             output("s can be incremented until " + smax);
             e = getQueryVariable("e");
             if (e) {
@@ -166,6 +167,7 @@
             s++;
             go();
         }
+        outputElapsedTime();
         output("Finished")
     }
 
@@ -177,8 +179,21 @@
         element.scrollTop = 99999;
     }
 
+    function outputElapsedTime() {
+        var endTime = new Date();
+        var timeDiff = endTime - startTime;
+        timeDiff /= 1000;
+        var seconds = Math.round(timeDiff % 60);
+        timeDiff = Math.floor(timeDiff / 60);
+        var minutes = Math.round(timeDiff % 60);
+        timeDiff = Math.floor(timeDiff / 60);
+        var hours = Math.round(timeDiff % 24);
+        output("Elapsed time: " + hours + "h " + minutes + "m " + seconds + "s");
+    }
+
     function errorOutput(text) {
         output(text);
+        outputElapsedTime();
         throw(text);
     }
 
@@ -236,8 +251,10 @@
             if (deg > 0 && deg < 3) {
                 var factorcommand = "factor(" + eliminate + ");";
                 var factor = compute(factorcommand);
+                var solvecommand = "solve([" + factor + "=0,d>0])";
+                var solve = compute(solvecommand);
                 output("n=" + n + ", s=" + s + ": A=" + A + ", B=" + B + ", C=" + C +
-                    ", D=" + D + ", E=" + E + ", F=" + F + ", G=" + G + ", H=" + H + ": " + factor);
+                    ", D=" + D + ", E=" + E + ", F=" + F + ", G=" + G + ", H=" + H + ": " + factor + ", " + solve);
             }
         }
     }
