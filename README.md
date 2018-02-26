@@ -60,8 +60,8 @@ one of the following numbers:
 The last two ones are negative numbers, that is, they must be excluded.
 But the first two possibilities are indeed possible, the first one
 occurs in the standard case, and the second one for a regular star pentagon:
-![a regular pentagon](/fig/pentagon.png?raw=true "A regular pentagon")
-![a regular star-pentagon](/fig/star-pentagon.png?raw=true "A regular star-pentagon")
+![a regular pentagon](/fig/pentagon-small.png?raw=true "A regular pentagon")
+![a regular star-pentagon](/fig/star-pentagon-small.png?raw=true "A regular star-pentagon")
 
 ### Other parameters
 
