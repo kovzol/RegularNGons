@@ -59,7 +59,22 @@ one of the following numbers:
 
 The last two ones are negative numbers, that is, they must be excluded.
 But the first two possibilities are indeed possible, the first one
-occurs in the standard case, and the second one for a regular star pentagon.
+occurs in the standard case, and the second one for a regular star pentagon:
+![a regular pentagon](/fig/pentagon.png?raw=true "A regular pentagon")
+
+### Other parameters
+
+You can use the parameter e to set the last case to
+investigate. If it is not set, the tool assumes that
+all cases need to be checked for the given n.
+
+## Examples
+
+The following theorems have been found by using **RegularNGons**:
+  * [A property of the regular heptagon](https://www.geogebra.org/m/trpuKnDs)   
+  * [A property of the regular nonagon](https://www.geogebra.org/m/xByk6ESM)
+  * [Some interesting properties of the regular decagon](https://www.geogebra.org/m/WRpmrAmH)
+  * [Some properties of a regular 17-gon](https://www.geogebra.org/m/V6Zdjzza)
 
 ## Issues
 
