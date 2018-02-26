@@ -85,4 +85,5 @@ The following theorems have been found by using **RegularNGons**:
   * Note that for bigger _n_ the computations may be slow, or some computation steps may be timed out.
   * Use the console of your browser by pressing F12 on the startup to get more information on the progress.
 The HTML page may not be refreshed properly.
-  * The case n=11, s=104663 makes Giac/WebAssembly crash when starting with case s=0.
+  * The case _n_=11, _s_=104663 makes Giac/WebAssembly crash when starting with case s=0.
+  * Some checked cases are duplicated because of ignored symmetry.
