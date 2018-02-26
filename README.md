@@ -34,8 +34,12 @@ Example: http://your.web.site/your.folder/index.html?n=5&s=0
 
 The output will be shown like this:
 ```
+Welcome to RegularNGons (https://github.com/kovzol/RegularNGons)...
 Starting RegularNGons with n=5, s=0
 s can be incremented until 30
+Waiting for the CAS...
+Elapsed time: 0h 0m 3s
+...CAS is up and running
 n=5, s=4: A=0, B=2, C=1, D=3, E=0, F=2, G=1, H=4: {-(d^2-3*d+1)*(d^2+3*d+1)}, {{d=(-1/2*(√5-3))},{d=(-1/2*(-√5-3))}}
 n=5, s=7: A=0, B=2, C=1, D=3, E=0, F=3, G=1, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
 n=5, s=8: A=0, B=2, C=1, D=3, E=0, F=3, G=2, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
@@ -83,7 +87,6 @@ The following theorems have been found by using **RegularNGons**:
 ## Known issues
 
   * Note that for bigger _n_ the computations may be slow, or some computation steps may be timed out.
-  * Use the console of your browser by pressing F12 on the startup to get more information on the progress.
-The HTML page may not be refreshed properly.
+  * You may use the console of your browser by pressing F12 on the startup to get more information on the progress.
   * The case _n_=11, _s_=104663 makes Giac/WebAssembly crash when starting with case _s_=0.
   * Some checked cases are duplicated because of ignored symmetry.
