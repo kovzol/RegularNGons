@@ -329,35 +329,65 @@
                 output("n=" + n + ", s=" + s + ": A=" + A + ", B=" + B + ", C=" + C +
                     ", D=" + D + ", E=" + E + ", F=" + F + ", G=" + G + ", H=" + H + ": " + factor + ", " + solve);
                 sol = sol + 1;
-                var ld = "d_{"+sol+"}";
-                ggbApplet.evalCommand(ld + "=Line(A_{"+A+"},A_{"+B+"})");
-                ggbApplet.setColor(ld, 192,192,192);
-                ggbApplet.setLabelVisible(ld, false);
-                var le = "e_{"+sol+"}";
-                ggbApplet.evalCommand(le + "=Line(A_{"+C+"},A_{"+D+"})");
-                ggbApplet.setColor(le, 192,192,192);
-                ggbApplet.setLabelVisible(le, false);
-                var lf = "f_{"+sol+"}";
-                ggbApplet.evalCommand(lf + "=Line(A_{"+E+"},A_{"+F+"})");
-                ggbApplet.setColor(lf, 192,192,192);
-                ggbApplet.setLabelVisible(lf, false);
-                var lg = "g_{"+sol+"}";
-                ggbApplet.evalCommand(lg + "=Line(A_{"+G+"},A_{"+H+"})");
-                ggbApplet.setColor(lg, 192,192,192);
-                ggbApplet.setLabelVisible(lg, false);
-                var pR = "R_{"+sol+"}";
-                ggbApplet.evalCommand(pR + "=Intersect(" + ld + "," + le + ")");
-                // ggbApplet.setLabelVisible(pR, false);
-                ggbApplet.setVisible(pR,false);
-                var pS = "S_{"+sol+"}";
-                ggbApplet.evalCommand(pS + "=Intersect(" + lf + "," + lg + ")");
-                // ggbApplet.setLabelVisible(pS, false);
-                ggbApplet.setVisible(pS,false);
+                var lAB;
+                var lCD;
+                var lEF;
+                var lGH;
+                if (A<B) lAB=A + "," + B; else lAB = B + "," + A;
+                var ld = "l_{"+lAB+"}";
+                if (!ggbApplet.exists(ld)) {
+                    ggbApplet.evalCommand(ld + "=Line(A_{" + A + "},A_{" + B + "})");
+                    ggbApplet.setColor(ld, 192, 192, 192);
+                    ggbApplet.setLabelVisible(ld, false);
+                }
+                if (C<D) lCD=C + "," + D; else lCD = D + "," + C;
+                var le = "l_{"+lCD+"}";
+                if (!ggbApplet.exists(le)) {
+                    ggbApplet.evalCommand(le + "=Line(A_{" + C + "},A_{" + D + "})");
+                    ggbApplet.setColor(le, 192, 192, 192);
+                    ggbApplet.setLabelVisible(le, false);
+                }
+                if (E<F) lEF=E + "," + F; else lEF = E + "," + F;
+                var lf = "l_{"+lEF+"}";
+                if (!ggbApplet.exists(lf)) {
+                    ggbApplet.evalCommand(lf + "=Line(A_{" + E + "},A_{" + F + "})");
+                    ggbApplet.setColor(lf, 192, 192, 192);
+                    ggbApplet.setLabelVisible(lf, false);
+                }
+                if (G<H) lGH=G + "," + H; else lGH = H + "," + H;
+                var lg = "l_{"+lGH+"}";
+                if (!ggbApplet.exists(lg)) {
+                    ggbApplet.evalCommand(lg + "=Line(A_{" + G + "},A_{" + H + "})");
+                    ggbApplet.setColor(lg, 192, 192, 192);
+                    ggbApplet.setLabelVisible(lg, false);
+                }
+
+                var pR1 = "R_{" + lAB + "," + lCD + "}";
+                var pR2 = "R_{" + lCD + "," + lAB + "}";
+                var pR;
+                if (ggbApplet.exists(pR1)) pR = pR1;
+                else if (ggbApplet.exists(pR2)) pR = pR2;
+                else {
+                    pR = pR1;
+                    ggbApplet.evalCommand(pR + "=Intersect(" + ld + "," + le + ")");
+                    ggbApplet.setVisible(pR,false);
+                }
+
+                var pS1 = "S_{" + lEF + "," + lGH + "}";
+                var pS2 = "S_{" + lGH + "," + lEF + "}";
+                var pS;
+                if (ggbApplet.exists(pS1)) pS = pS1;
+                else if (ggbApplet.exists(pS2)) pS = pS2;
+                else {
+                    pS = pS1;
+                    ggbApplet.evalCommand(pS + "=Intersect(" + lf + "," + lg + ")");
+                    ggbApplet.setVisible(pS,false);
+                }
+
                 var sRS = "RS_{"+sol+"}";
                 ggbApplet.evalCommand(sRS + "=Segment("+pR+","+pS+")");
                 ggbApplet.setLabelVisible(sRS, false);
                 ggbApplet.setColor(sRS, 0, 0, 64);
-
 
             }
         }
@@ -386,7 +416,9 @@
               outputElapsedTime();
               output("...CAS is up and running");
               output("Setting up GeoGebra applet");
-              ggbApplet.setAxesVisible(false,false);
+              ggbApplet.setCustomToolBar("0|14");
+              // ggbApplet.setAxesVisible(false,false);
+              ggbApplet.setAxesVisible(1,false,false,false);
               ggbApplet.evalCommand("A=(0,0)");
               ggbApplet.evalCommand("B=(1,0)");
               ggbApplet.evalCommand("poly1=Polygon(A,B,"+n+")");
