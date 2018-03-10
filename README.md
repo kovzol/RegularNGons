@@ -85,6 +85,8 @@ all cases need to be checked for the given _n_.
 The parameter _r_ can be used to restrict outputs to rational
 values. This setting is off by default.
 
+The parameter _u_ will force searching for unit results.  
+
 ## Examples
 
 The following theorems have been found by using **RegularNGons**:

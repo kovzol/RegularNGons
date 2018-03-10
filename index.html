@@ -100,15 +100,26 @@
                 output("Assuming s=0, please append &s=... to the URL to override");
                 s=0;
             }
+            output("Starting with n=" + n + ", s=" + s);
+
+            only1 = getQueryVariable("u");
+            if (!only1) {
+                only1=0;
+            }
+            if (only1==1) {
+                output("Considering only unit results");
+                ratonly=1;
+            }
+
             ratonly = getQueryVariable("r");
             if (!ratonly) {
                 output("Assuming r=0 ('rationals only' is off), please append &r=1 to the URL to override");
                 ratonly=0;
             }
-            output("Starting with n=" + n + ", s=" + s);
-            if (ratonly==1) {
+            if (ratonly==1 && only1==0) {
                 output("Considering only rational results");
             }
+
             sol = 0;
             startTime = new Date();
             output("s can be incremented until " + smax);
@@ -296,16 +307,25 @@
             var degree = compute(degreecommand);
             var deg = Number(degree);
             var accepted = false;
+            var factorcommand;
+            var factor;
+            var solvecommand;
+            var solve;
             if (ratonly==0) {
                 accepted = (deg > 0 && deg < 3);
             } else {
                 accepted = (deg == 1);
             }
             if (accepted) {
-                var factorcommand = "factor(" + eliminate + ");";
-                var factor = compute(factorcommand);
-                var solvecommand = "solve([" + factor + "=0,d>0])";
-                var solve = compute(solvecommand);
+                factorcommand = "factor(" + eliminate + ");";
+                factor = compute(factorcommand);
+                solvecommand = "solve([" + factor + "=0,d>0])";
+                solve = compute(solvecommand);
+            }
+            if (only1==1 && solve!="{{d=1}}") {
+                accepted = false;
+            }
+            if (accepted) {
                 output("n=" + n + ", s=" + s + ": A=" + A + ", B=" + B + ", C=" + C +
                     ", D=" + D + ", E=" + E + ", F=" + F + ", G=" + G + ", H=" + H + ": " + factor + ", " + solve);
                 sol = sol + 1;
