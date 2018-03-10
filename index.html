@@ -19,12 +19,15 @@
   <div class="outer">
       <div class="middle">
           <div class="inner">
-              <textarea class="emscripten" id="output" rows="50" cols="80">Welcome to RegularNGons (https://github.com/kovzol/RegularNGons)...
-</textarea>
+
+              <textarea class="emscripten" id="output" rows="10" cols="80">Welcome to RegularNGons (https://github.com/kovzol/RegularNGons)...
+</textarea><br><div id="applet_container" class="emscripten"></div>
           </div>
       </div>
   </div>
 
+
+  <script type="text/javascript" src="https://cdn.geogebra.org/apps/deployggb.js"></script>
 
   <script type='text/javascript'>
     function compute(inputString) { // compute a Giac command and return the output
@@ -62,19 +65,51 @@
 
     function go() {
         n = getQueryVariable("n");
-        if (!n) errorOutput("Please append n=... to the URL");
+        if (!n) errorOutput("Please append &n=... to the URL");
         if (n<5) errorOutput("Invalid n: " + n + " (please use a number >= 5)");
         cd = (n-2)*(n-3)/2-(n-4);
         efgh = n*(n-1)/2* (n-2)*(n-3)/2 /2;
         smax = (n-4)*cd*efgh;
         // on startup
         if (typeof s === 'undefined') {
+            // Setup GeoGebra
+            var parameters = {
+                "id":"ggbApplet",
+                "width":960,
+                "height":600,
+                "showToolBar":true,
+                "borderColor":null,
+                "showMenuBar":true,
+                "allowStyleBar":true,
+                "showAlgebraInput":false,
+                "enableLabelDrags":true,
+                "enableShiftDragZoom":true,
+                "capturingThreshold":null,
+                "showToolBarHelp":false,
+                "errorDialogsActive":true,
+                "showTutorialLink":true,
+                "showLogging":true,
+                "useBrowserForJS":false,
+                "perspective":"AG"};
+
+            var applet = new GGBApplet(parameters, '5.0', 'applet_container');
+            applet.inject('applet_container');
+
             s = getQueryVariable("s");
             if (!s) {
-                output("Assuming s=0, please append s=... to the URL to override");
+                output("Assuming s=0, please append &s=... to the URL to override");
                 s=0;
             }
+            ratonly = getQueryVariable("r");
+            if (!ratonly) {
+                output("Assuming r=0 ('rationals only' is off), please append &r=1 to the URL to override");
+                ratonly=0;
+            }
             output("Starting with n=" + n + ", s=" + s);
+            if (ratonly==1) {
+                output("Considering only rational results");
+            }
+            sol = 0;
             startTime = new Date();
             output("s can be incremented until " + smax);
             e = getQueryVariable("e");
@@ -179,7 +214,7 @@
             go();
         }
         outputElapsedTime();
-        output("Finished")
+        output("Finished after finding "+sol+" solutions")
     }
 
     function output(text) {
@@ -260,13 +295,50 @@
             var degreecommand = "degree(" + factors + "[0][0]);";
             var degree = compute(degreecommand);
             var deg = Number(degree);
-            if (deg > 0 && deg < 3) {
+            var accepted = false;
+            if (ratonly==0) {
+                accepted = (deg > 0 && deg < 3);
+            } else {
+                accepted = (deg == 1);
+            }
+            if (accepted) {
                 var factorcommand = "factor(" + eliminate + ");";
                 var factor = compute(factorcommand);
                 var solvecommand = "solve([" + factor + "=0,d>0])";
                 var solve = compute(solvecommand);
                 output("n=" + n + ", s=" + s + ": A=" + A + ", B=" + B + ", C=" + C +
                     ", D=" + D + ", E=" + E + ", F=" + F + ", G=" + G + ", H=" + H + ": " + factor + ", " + solve);
+                sol = sol + 1;
+                var ld = "d_{"+sol+"}";
+                ggbApplet.evalCommand(ld + "=Line(A_{"+A+"},A_{"+B+"})");
+                ggbApplet.setColor(ld, 192,192,192);
+                ggbApplet.setLabelVisible(ld, false);
+                var le = "e_{"+sol+"}";
+                ggbApplet.evalCommand(le + "=Line(A_{"+C+"},A_{"+D+"})");
+                ggbApplet.setColor(le, 192,192,192);
+                ggbApplet.setLabelVisible(le, false);
+                var lf = "f_{"+sol+"}";
+                ggbApplet.evalCommand(lf + "=Line(A_{"+E+"},A_{"+F+"})");
+                ggbApplet.setColor(lf, 192,192,192);
+                ggbApplet.setLabelVisible(lf, false);
+                var lg = "g_{"+sol+"}";
+                ggbApplet.evalCommand(lg + "=Line(A_{"+G+"},A_{"+H+"})");
+                ggbApplet.setColor(lg, 192,192,192);
+                ggbApplet.setLabelVisible(lg, false);
+                var pR = "R_{"+sol+"}";
+                ggbApplet.evalCommand(pR + "=Intersect(" + ld + "," + le + ")");
+                // ggbApplet.setLabelVisible(pR, false);
+                ggbApplet.setVisible(pR,false);
+                var pS = "S_{"+sol+"}";
+                ggbApplet.evalCommand(pS + "=Intersect(" + lf + "," + lg + ")");
+                // ggbApplet.setLabelVisible(pS, false);
+                ggbApplet.setVisible(pS,false);
+                var sRS = "RS_{"+sol+"}";
+                ggbApplet.evalCommand(sRS + "=Segment("+pR+","+pS+")");
+                ggbApplet.setLabelVisible(sRS, false);
+                ggbApplet.setColor(sRS, 0, 0, 64);
+
+
             }
         }
         done = true;
@@ -292,7 +364,19 @@
           console.log("Giac status = " + text);
           if (text == "") { // ready to go
               outputElapsedTime();
-              output("...CAS is up and running")
+              output("...CAS is up and running");
+              output("Setting up GeoGebra applet");
+              ggbApplet.setAxesVisible(false,false);
+              ggbApplet.evalCommand("A=(0,0)");
+              ggbApplet.evalCommand("B=(1,0)");
+              ggbApplet.evalCommand("poly1=Polygon(A,B,"+n+")");
+              ggbApplet.setLabelVisible("poly1", false);
+              for (i=0; i<n; ++i) {
+                  var oldLabel = String.fromCharCode(65+i);
+                  var newLabel = "A_{" + i + "}";
+                  ggbApplet.renameObject(oldLabel, newLabel);
+                  ggbApplet.setVisible(newLabel, false);
+              }
               doCAScomputation();
           }
         },
@@ -303,7 +387,7 @@
         }
       };
       Module.setStatus('Downloading...');
-    </script>      
+    </script>
   <script src="giac.js"></script>
 
 </body>

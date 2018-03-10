@@ -16,11 +16,14 @@ when _RS_ is a rational number, or a root of a quadratic
 polynomial (that is, a quadratic surd).
 
 The computations are performed by the 
+[WebAssembly](http://webassembly.org/) version of the 
 [Giac](https://www-fourier.ujf-grenoble.fr/~parisse/giac.html)
-computer algebra system. If your web server and browser
-are compatible, the calculations will use
-the [WebAssembly](http://webassembly.org/) version of Giac, provided by the
-[GeoGebra](http://www.geogebra.org) Team. 
+computer algebra system. Therefore you need a recent web browser,
+and also a modern web server.
+
+During processing, a [GeoGebra](http://www.geogebra.org)
+file will be created in your browser
+that contains all positive outputs of the run. 
 
 ## Usage
 
@@ -35,11 +38,14 @@ Example: http://your.web.site/your.folder/index.html?n=5&s=0
 The output will be shown like this:
 ```
 Welcome to RegularNGons (https://github.com/kovzol/RegularNGons)...
-Starting RegularNGons with n=5, s=0
+Assuming s=0, please append &s=... to the URL to override
+Assuming r=0 ('rationals only' is off), please append &r=1 to the URL to override
+Starting with n=5, s=0
 s can be incremented until 30
 Waiting for the CAS...
-Elapsed time: 0h 0m 3s
+Elapsed time: 0h 0m 4s
 ...CAS is up and running
+Setting up GeoGebra applet
 n=5, s=4: A=0, B=2, C=1, D=3, E=0, F=2, G=1, H=4: {-(d^2-3*d+1)*(d^2+3*d+1)}, {{d=(-1/2*(√5-3))},{d=(-1/2*(-√5-3))}}
 n=5, s=7: A=0, B=2, C=1, D=3, E=0, F=3, G=1, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
 n=5, s=8: A=0, B=2, C=1, D=3, E=0, F=3, G=2, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
@@ -49,7 +55,7 @@ n=5, s=22: A=0, B=2, C=1, D=4, E=0, F=3, G=1, H=4: {-(d^2-3*d+1)*(d^2+3*d+1)}, {
 n=5, s=23: A=0, B=2, C=1, D=4, E=0, F=3, G=2, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
 n=5, s=28: A=0, B=2, C=1, D=4, E=1, F=3, G=2, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
 Elapsed time: 0h 0m 7s
-Finished
+Finished after finding 8 solutions
 ```
 This means, that in a regular pentagon 30 cases will be observed.
 The 4th case describes the setup when the diagonals are as follows:
@@ -75,6 +81,9 @@ occurs in the standard case, and the second one for a regular star-pentagon:
 You can use the parameter _e_ to set the last case to
 investigate. If it is not set, the tool assumes that
 all cases need to be checked for the given _n_.
+
+The parameter _r_ can be used to restrict outputs to rational
+values. This setting is off by default.
 
 ## Examples
 
