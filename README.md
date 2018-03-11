@@ -85,7 +85,8 @@ all cases need to be checked for the given _n_.
 The parameter _r_ can be used to restrict outputs to rational
 values. This setting is off by default.
 
-The parameter _u_ will force searching for unit results.  
+The parameter _u_ will force searching for results given as parameters.
+For example, _u_=2 considers only the outputs that are of _RS_=2.   
 
 ## Examples
 

@@ -102,13 +102,13 @@
             }
             output("Starting with n=" + n + ", s=" + s);
 
-            only1 = getQueryVariable("u");
-            if (!only1) {
-                only1=0;
+            onlyX = getQueryVariable("u");
+            if (!onlyX) {
+                onlyX=0;
             }
-            if (only1==1) {
-                output("Considering only unit results");
-                ratonly=1;
+            if (onlyX!=0) {
+                output("Considering only results d="+onlyX);
+                ratonly=0;
             }
 
             ratonly = getQueryVariable("r");
@@ -116,7 +116,7 @@
                 output("Assuming r=0 ('rationals only' is off), please append &r=1 to the URL to override");
                 ratonly=0;
             }
-            if (ratonly==1 && only1==0) {
+            if (ratonly==1 && onlyX==0) {
                 output("Considering only rational results");
             }
 
@@ -322,7 +322,7 @@
                 solvecommand = "solve([" + factor + "=0,d>0])";
                 solve = compute(solvecommand);
             }
-            if (only1==1 && solve!="{{d=1}}") {
+            if (onlyX!=0 && solve!="{{d="+onlyX+"}}") {
                 accepted = false;
             }
             if (accepted) {
