@@ -26,7 +26,6 @@
       </div>
   </div>
 
-
   <script type="text/javascript" src="https://cdn.geogebra.org/apps/deployggb.js"></script>
 
   <script type='text/javascript'>
@@ -47,29 +46,28 @@
         return(false);
     }
 
-    function good(a,b,c,d) {
-        if (a==b || a==c || a==d || b == c || b == d || c == d) {
-            return false;
+    /* Compute the xth element among \binom{n}{2}.
+     * (a,b) is a pair where 0<=a<b<N.
+     */
+    function deserialize(x,N) {
+        var a=Math.floor(((2*N-1)-Math.sqrt((2*N-1)*(2*N-1)-8*x))/2);
+        var b=(2*x+a*a-(2*N-3)*a)/2+1;
+        // console.log("deserialize(" + x + "," + N + ")=" + a+ "," + b);
+        return {
+            "a": a,
+            "b": b
         }
-        if (a>=n || b >= n || c>=n || d>=n) {
-            return false;
-        }
-        var j;
-        var es = efghlist.length;
-        for (j=0; j<es; ++j) {
-            if (efghlist[j] == c + "," + d + "," + a + "," + b)
-                return false;
-        }
-        return true;
     }
 
     function go() {
         n = getQueryVariable("n");
         if (!n) errorOutput("Please append &n=... to the URL");
-        if (n<5) errorOutput("Invalid n: " + n + " (please use a number >= 5)");
-        cd = (n-2)*(n-3)/2-(n-4);
-        efgh = n*(n-1)/2* (n-2)*(n-3)/2 /2;
-        smax = (n-4)*cd*efgh;
+        if (n<3) errorOutput("Invalid n: " + n + " (please use a number >= 3)");
+        ab = n*(n-1)/2;
+        cd = (ab-1)/2;
+        abcd = ab*cd;
+        efgh = (abcd-1)/2;
+        smax = abcd*efgh;
         // on startup
         if (typeof s === 'undefined') {
             // Setup GeoGebra
@@ -132,75 +130,29 @@
             output("Waiting for the CAS...")
         }
         if (s<0 || s>=smax) errorOutput("Invalid s: " + s);
-        A = 0;
-        var Bpos = s;
-        var Bmax = n-4;
-        var Bslice = smax/Bmax;
-        B = Math.floor(Bpos/Bslice);
-        var CDpos = Bpos - B * Bslice;
-        B += 2;
-        console.log("A = 0");
-        console.log("B = " + B);
-        var CDmax = cd;
-        var CDslice = Bslice/CDmax;
-        var CD = Math.floor(CDpos/CDslice);
-        console.log("Bpos = " + Bpos + ", Bmax = " + Bmax + ", Bslice = "
-             + Bslice + ", CDpos = " + CDpos + ", CDmax = " + CDmax
-             + ", CDslice = " + CDslice);
-        console.log("CD = " + CD);
 
-        C = 1;
-        D = C+1;
-        CDsave = CD;
-        while (CD > -1) {
-            if (D<n-1) D++;
-            else {
-                C++;
-                D = C+2;
-            }
-            // is C=B or D=B?
-            if (C==B) {
-                C++;
-                D++;
-            }
-            if (D==B) {
-                D++;
-            }
-            console.log("Considering C = " + C + ", D = " + D);
-            if (B-A != C-D) {
-                console.log("B-A = " + (B-A)+ ", C-D = " + (C-D) + " normal case, allowed");
-                CD--;
-            } else {
-                console.log("B-A = " + (B-A)+ ", C-D = " + (C-D) + " parallel case, disallowed");
-            }
-        }
-        CD = CDsave;
-        console.log("C = " + C + ", D = " + D);
+        var segment = deserialize(s,abcd);
+        var ABCD = segment['a'];
+        var EFGH = segment['b'];
+        var R = deserialize(ABCD, ab);
+        var AB = R['a'];
+        var CD = R['b'];
+        var A_B_ = deserialize(AB,n);
+        var C_D_ = deserialize(CD,n);
+        var S = deserialize(EFGH, ab);
+        var EF = S['a'];
+        var GH = S['b'];
+        var E_F_ = deserialize(EF,n);
+        var G_H_ = deserialize(GH,n);
+        A = A_B_['a'];
+        B = A_B_['b'];
+        C = C_D_['a'];
+        D = C_D_['b'];
+        E = E_F_['a'];
+        F = E_F_['b'];
+        G = G_H_['a'];
+        H = G_H_['b'];
 
-        var EFGHpos = CDpos - CD * CDslice;
-        var EFGHmax = efgh;
-        var EFGHslice = CDslice/EFGHmax;
-        var EFGH = Math.floor(EFGHpos/EFGHslice);
-        console.log("EFGHpos = " + EFGHpos + ", EFGHmax = " + EFGHmax + ", EFGHslice = "
-           + EFGHslice);
-        console.log("EFGH = " + EFGH);
-
-        EFGHsave = EFGH;
-        var i = 0;
-        efghlist = [];
-        loop:
-        for (E=0; E<n; E++)
-            for (F=E+1; F<n; F++)
-                for (G=0; G<n; G++)
-                    for (H=G+1; H<n; H++) {
-                        if (good(E,F,G,H)) {
-                            EFGH--;
-                            efghlist[i] = E + "," + F + "," + G + "," + H;
-                            ++i;
-                        }
-                        if (EFGH<0) break loop;
-                    }
-        EFGH = EFGHsave;
         console.log("A = " + A + ", B = " + B + ", C = " + C + ", D = " + D + ", E = " + E + ", F = " + F + ", G = " + G + ", H = " + H);
     }
 
@@ -224,6 +176,7 @@
             s++;
             go();
         }
+        CAScomputeCurrent();
         outputElapsedTime();
         output("Finished after finding "+sol+" solutions")
     }
@@ -261,8 +214,7 @@
         var c = compute("subst(cos2piOverNMinpoly(" + n + "),[x=c]);");
         // s=sin(2pi/n)
         var s_ = "s^2+c^2-1";
-        // A=0
-        var d = "ax,ay";
+        var d = "0,"; // technical trick
         // P0=(0,0), P1=(1,0)
         var p = "p0x,p0y,p1x-1,p1y";
         var maxindex = Math.max(B,C,D,E,F,G,H);
@@ -280,6 +232,7 @@
                 p += ",-" + px + "-s*" + ppy + "+" + ppx + "+c*" + ppx + "+s*" + pppy + "-c*" + pppx;
                 p += ",-" + py + "+" + ppy + "+c*" + ppy + "+s*" + ppx + "-c*" + pppy + "-s*" + pppx;
             }
+            if (A==i) d += ",ax-" + px + ",ay-" + py;
             if (B==i) d += ",bx-" + px + ",b_y-" + py;
             if (C==i) d += ",cx-" + px + ",cy-" + py;
             if (D==i) d += ",dx-" + px + ",dy-" + py;
@@ -388,7 +341,6 @@
                 ggbApplet.evalCommand(sRS + "=Segment("+pR+","+pS+")");
                 ggbApplet.setLabelVisible(sRS, false);
                 ggbApplet.setColor(sRS, 0, 0, 64);
-
             }
         }
         done = true;

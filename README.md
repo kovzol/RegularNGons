@@ -32,33 +32,37 @@ the internet by a web browser. Then point your browser to
 the index.html file by adding parameters _n_ and _s_ where _n_
 is the number of sides of the regular polygon and _s_ is the
 setup number to start, in most cases 0.
+You can use the parameter _e_ to set the last case to
+investigate. If it is not set, the tool assumes that
+all cases need to be checked for the given _n_.
 
-Example: http://your.web.site/your.folder/index.html?n=5&s=0
+
+Example: http://your.web.site/your.folder/index.html?n=5&s=460&e=470
 
 The output will be shown like this:
 ```
 Welcome to RegularNGons (https://github.com/kovzol/RegularNGons)...
-Assuming s=0, please append &s=... to the URL to override
+Starting with n=5, s=460
 Assuming r=0 ('rationals only' is off), please append &r=1 to the URL to override
-Starting with n=5, s=0
-s can be incremented until 30
+s can be incremented until 990
+Computation will stop at 470
 Waiting for the CAS...
 Elapsed time: 0h 0m 4s
 ...CAS is up and running
 Setting up GeoGebra applet
-n=5, s=4: A=0, B=2, C=1, D=3, E=0, F=2, G=1, H=4: {-(d^2-3*d+1)*(d^2+3*d+1)}, {{d=(-1/2*(√5-3))},{d=(-1/2*(-√5-3))}}
-n=5, s=7: A=0, B=2, C=1, D=3, E=0, F=3, G=1, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
-n=5, s=8: A=0, B=2, C=1, D=3, E=0, F=3, G=2, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
-n=5, s=13: A=0, B=2, C=1, D=3, E=1, F=3, G=2, H=4: {-(d^2-3*d+1)*(d^2+3*d+1)}, {{d=(-1/2*(√5-3))},{d=(-1/2*(-√5-3))}}
-n=5, s=18: A=0, B=2, C=1, D=4, E=0, F=2, G=1, H=3: {-(d^2-3*d+1)*(d^2+3*d+1)}, {{d=(-1/2*(√5-3))},{d=(-1/2*(-√5-3))}}
-n=5, s=22: A=0, B=2, C=1, D=4, E=0, F=3, G=1, H=4: {-(d^2-3*d+1)*(d^2+3*d+1)}, {{d=(-1/2*(√5-3))},{d=(-1/2*(-√5-3))}}
-n=5, s=23: A=0, B=2, C=1, D=4, E=0, F=3, G=2, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
-n=5, s=28: A=0, B=2, C=1, D=4, E=1, F=3, G=2, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
-Elapsed time: 0h 0m 7s
+n=5, s=460: A=0, B=2, C=1, D=2, E=2, F=3, G=3, H=4: {-(d-1)*(d+1)}, {{d=1}}
+n=5, s=461: A=0, B=2, C=1, D=2, E=2, F=4, G=3, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
+n=5, s=462: A=0, B=2, C=1, D=3, E=0, F=2, G=1, H=4: {-(d^2-3*d+1)*(d^2+3*d+1)}, {{d=(-1/2*(√5-3))},{d=(-1/2*(-√5-3))}}
+n=5, s=463: A=0, B=2, C=1, D=3, E=0, F=2, G=2, H=3: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
+n=5, s=464: A=0, B=2, C=1, D=3, E=0, F=2, G=2, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
+n=5, s=466: A=0, B=2, C=1, D=3, E=0, F=3, G=0, H=4: {-(d-1)*(d+1)}, {{d=1}}
+n=5, s=468: A=0, B=2, C=1, D=3, E=0, F=3, G=1, H=3: {-(d-1)*(d+1)}, {{d=1}}
+n=5, s=469: A=0, B=2, C=1, D=3, E=0, F=3, G=1, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
+Elapsed time: 0h 0m 6s
 Finished after finding 8 solutions
 ```
-This means, that in a regular pentagon 30 cases will be observed.
-The 4th case describes the setup when the diagonals are as follows:
+This means, that in a regular pentagon 990 cases will be observed.
+For example, case #462 describes the setup when the diagonals are as follows:
   * _d_ joins the 0th and 2nd vertices,
   * _e_ joins the 1st and 3rd vertices,
   * _f_ joins the 0th and 2nd vertices,
@@ -78,10 +82,6 @@ occurs in the standard case, and the second one for a regular star-pentagon:
 
 ### Other parameters
 
-You can use the parameter _e_ to set the last case to
-investigate. If it is not set, the tool assumes that
-all cases need to be checked for the given _n_.
-
 The parameter _r_ can be used to restrict outputs to rational
 values. This setting is off by default.
 
@@ -98,7 +98,7 @@ The following theorems have been found by using **RegularNGons**:
 
 ## Known issues
 
-  * Note that for bigger _n_ the computations may be slow, or some computation steps may be timed out.
+  * Note that for bigger _n_ the computations may be slow, or some computation steps may be timed out or the application can crash.
   * You may use the console of your browser by pressing F12 on the startup to get more information on the progress.
-  * The case _n_=11, _s_=104663 makes Giac/WebAssembly crash when starting with case _s_=0.
-  * Some checked cases are duplicated because of ignored symmetry.
+  * Some checked cases are duplicated because intersecting different diagonals may result in the same point.
+  * Some browsers are not working properly.
