@@ -130,7 +130,14 @@
                 maxdegree=2;
             }
 
+            symm = getQueryVariable("S");
+            if (!symm) {
+                output("Not ignoring symmetry, please append &S=0 to the URL to ignore (this speeds up computation)");
+                symm=1;
+            }
+
             sol = 0;
+            notchecked = 0;
             startTime = new Date();
             output("s can be incremented until " + smax);
             e = getQueryVariable("e");
@@ -183,14 +190,20 @@
     async function doCAScomputation() {
         CASinitCommands();
         while (s<e-1) {
-            CAScomputeCurrent();
-            await sleep(1);
+            if (symm==1 || (A==0 && 2*B<=n)) {
+                CAScomputeCurrent();
+                await sleep(1);
+                } else {
+                notchecked++;
+            }
             s++;
             go();
         }
         CAScomputeCurrent();
         outputElapsedTime();
-        output("Finished after finding "+sol+" solutions")
+        output("Finished after finding "+sol+" solutions");
+        output(notchecked+" cases were not checked to ignore symmetry");
+
     }
 
     function output(text) {

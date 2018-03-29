@@ -91,7 +91,11 @@ The parameter _u_ will force searching for results given as parameters.
 For example, _u_=2 considers only the outputs that are of _RS_=2.
 
 By adding _m_=... or _M_=... the minimal and maximal degree of outputs
-can be controlled. By default _m_=1 and _M_=2.   
+can be controlled. By default _m_=1 and _M_=2.
+
+The option _S_=0 tries to avoid checking cases that were already checked
+in an symmetrically equivalent position. When this is set, only
+the _A_=0, _B_≤_n_/2 cases will be checked.    
 
 ## Examples
 
