@@ -118,6 +118,18 @@
                 output("Considering only rational results");
             }
 
+            mindegree = getQueryVariable("m");
+            if (!mindegree) {
+                output("Assuming mindegree=1, please append &m=... to the URL to override");
+                mindegree=1;
+            }
+
+            maxdegree = getQueryVariable("M");
+            if (!maxdegree) {
+                output("Assuming maxdegree=2, please append &M=... to the URL to override");
+                maxdegree=2;
+            }
+
             sol = 0;
             startTime = new Date();
             output("s can be incremented until " + smax);
@@ -265,7 +277,7 @@
             var solvecommand;
             var solve;
             if (ratonly==0) {
-                accepted = (deg > 0 && deg < 3);
+                accepted = (deg >= mindegree && deg <= maxdegree);
             } else {
                 accepted = (deg == 1);
             }

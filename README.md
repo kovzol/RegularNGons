@@ -13,7 +13,7 @@ length of the side of the polygon.
 
 This tool uses your web browser to find interesting setups
 when _RS_ is a rational number, or a root of a quadratic
-polynomial (that is, a quadratic surd).
+polynomial (that is, a quadratic surd). This can be optionally changed.
 
 The computations are performed by the 
 [WebAssembly](http://webassembly.org/) version of the 
@@ -44,6 +44,8 @@ The output will be shown like this:
 Welcome to RegularNGons (https://github.com/kovzol/RegularNGons)...
 Starting with n=5, s=460
 Assuming r=0 ('rationals only' is off), please append &r=1 to the URL to override
+Assuming mindegree=1, please append &m=... to the URL to override
+Assuming maxdegree=2, please append &M=... to the URL to override
 s can be incremented until 990
 Computation will stop at 470
 Waiting for the CAS...
@@ -86,7 +88,10 @@ The parameter _r_ can be used to restrict outputs to rational
 values. This setting is off by default.
 
 The parameter _u_ will force searching for results given as parameters.
-For example, _u_=2 considers only the outputs that are of _RS_=2.   
+For example, _u_=2 considers only the outputs that are of _RS_=2.
+
+By adding _m_=... or _M_=... the minimal and maximal degree of outputs
+can be controlled. By default _m_=1 and _M_=2.   
 
 ## Examples
 
