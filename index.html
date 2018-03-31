@@ -401,7 +401,10 @@
               ggbApplet.evalCommand("poly1=Polygon(A,B,"+n+")");
               ggbApplet.setLabelVisible("poly1", false);
               for (i=0; i<n; ++i) {
-                  var oldLabel = String.fromCharCode(65+i);
+                  var oldLabel = String.fromCharCode(65+(i%24));
+                  if (oldLabel == 'X') oldLabel = 'Z';
+                  var index = Math.floor(i/24);
+                  if (index>0) {oldLabel += "_" + index};
                   var newLabel = "A_{" + i + "}";
                   ggbApplet.renameObject(oldLabel, newLabel);
                   ggbApplet.setVisible(newLabel, false);
