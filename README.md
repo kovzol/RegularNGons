@@ -95,7 +95,7 @@ can be controlled. By default _m_=1 and _M_=2.
 
 The option _S_=0 tries to avoid checking cases that were already checked
 in an symmetrically equivalent position. When this is set, only
-the _A_=0, _B_≤_n_/2 cases will be checked.    
+the _A_=0, _B_ ≤ _n_/2 cases will be checked.    
 
 ## Examples
 
