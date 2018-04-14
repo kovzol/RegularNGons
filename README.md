@@ -46,22 +46,24 @@ Starting with n=5, s=460
 Assuming r=0 ('rationals only' is off), please append &r=1 to the URL to override
 Assuming mindegree=1, please append &m=... to the URL to override
 Assuming maxdegree=2, please append &M=... to the URL to override
+Not ignoring symmetry, please append &S=0 to the URL to ignore (this speeds up computation)
+Not ignoring already found lengths, please append &f=1 to override
 s can be incremented until 990
 Computation will stop at 470
 Waiting for the CAS...
-Elapsed time: 0h 0m 4s
+Elapsed time: 0h 0m 8s
 ...CAS is up and running
 Setting up GeoGebra applet
-n=5, s=460: A=0, B=2, C=1, D=2, E=2, F=3, G=3, H=4: {-(d-1)*(d+1)}, {{d=1}}
-n=5, s=461: A=0, B=2, C=1, D=2, E=2, F=4, G=3, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
-n=5, s=462: A=0, B=2, C=1, D=3, E=0, F=2, G=1, H=4: {-(d^2-3*d+1)*(d^2+3*d+1)}, {{d=(-1/2*(√5-3))},{d=(-1/2*(-√5-3))}}
-n=5, s=463: A=0, B=2, C=1, D=3, E=0, F=2, G=2, H=3: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
-n=5, s=464: A=0, B=2, C=1, D=3, E=0, F=2, G=2, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
-n=5, s=466: A=0, B=2, C=1, D=3, E=0, F=3, G=0, H=4: {-(d-1)*(d+1)}, {{d=1}}
-n=5, s=468: A=0, B=2, C=1, D=3, E=0, F=3, G=1, H=3: {-(d-1)*(d+1)}, {{d=1}}
-n=5, s=469: A=0, B=2, C=1, D=3, E=0, F=3, G=1, H=4: {-(d^2-d-1)*(d^2+d-1)}, {{d=(-1/2*(-√5-1))},{d=(1/2*(√5-1))}}
-Elapsed time: 0h 0m 6s
+n=5, s=460: A=0, B=2, C=1, D=2, E=2, F=3, G=3, H=4: {RS^2-1}, {{RS=1}}
+n=5, s=461: A=0, B=2, C=1, D=2, E=2, F=4, G=3, H=4: {RS^4-3*RS^2+1}, {{RS=(1/2*(√5+1))},{RS=(1/2*(√5-1))}}
+n=5, s=462: A=0, B=2, C=1, D=3, E=0, F=2, G=1, H=4: {RS^4-7*RS^2+1}, {{RS=(1/2*(√5+3))},{RS=(1/2*(-√5+3))}}
+n=5, s=463: A=0, B=2, C=1, D=3, E=0, F=2, G=2, H=3: {RS^4-3*RS^2+1}, {{RS=(1/2*(√5+1))},{RS=(1/2*(√5-1))}}
+n=5, s=464: A=0, B=2, C=1, D=3, E=0, F=2, G=2, H=4: {RS^4-3*RS^2+1}, {{RS=(1/2*(√5+1))},{RS=(1/2*(√5-1))}}
+n=5, s=466: A=0, B=2, C=1, D=3, E=0, F=3, G=0, H=4: {RS^2-1}, {{RS=1}}
+n=5, s=468: A=0, B=2, C=1, D=3, E=0, F=3, G=1, H=3: {RS^2-1}, {{RS=1}}
+n=5, s=469: A=0, B=2, C=1, D=3, E=0, F=3, G=1, H=4: {RS^4-3*RS^2+1}, {{RS=(1/2*(√5+1))},{RS=(1/2*(√5-1))}}Elapsed time: 0h 0m 11s
 Finished after finding 8 solutions
+0 cases were not checked to ignore symmetry
 ```
 This means, that in a regular pentagon 990 cases will be observed.
 For example, case #462 describes the setup when the diagonals are as follows:
@@ -71,8 +73,8 @@ For example, case #462 describes the setup when the diagonals are as follows:
   * _g_ joins the 1st and 4th vertices.
 
 Now by considering the intersection of _d_ and _e_ (that is, point _R_), and _f_ and _g_
-(that is, point _S_), the distance of _R_ and _S_ can be expressed either by
-the equation `d^2-3*d+1=0` or `d^2+3*d+1=0`. Since only the positive
+(that is, point _S_), the distance of _R_ and _S_ can be expressed by
+the equation `d^4-3*d^2+1=0`. Since only the positive
 roots have a geometric meaning, _RS_ must be one of the following numbers:
   * (3-√5)/2
   * (3+√5)/2
@@ -84,9 +86,6 @@ occurs in the standard case, and the second one for a regular star-pentagon:
 
 ### Other parameters
 
-The parameter _r_ can be used to restrict outputs to rational
-values. This setting is off by default.
-
 The parameter _u_ will force searching for results given as parameters.
 For example, _u_=2 considers only the outputs that are of _RS_=2.
 
@@ -95,7 +94,10 @@ can be controlled. By default _m_=1 and _M_=2.
 
 The option _S_=0 tries to avoid checking cases that were already checked
 in an symmetrically equivalent position. When this is set, only
-the _A_=0, _B_ ≤ _n_/2 cases will be checked.    
+the _A_=0, _B_ ≤ _n_/2 cases will be checked.
+
+When using _f_=1, once a length is found, no more results will be printed
+that have the same length.    
 
 ## Examples
 
@@ -105,9 +107,9 @@ The following theorems have been found by using **RegularNGons**:
   * [Some interesting properties of the regular decagon](https://www.geogebra.org/m/WRpmrAmH)
   * [Some properties of a regular 17-gon](https://www.geogebra.org/m/V6Zdjzza)
 
-## Known issues
+## Known issues and workarounds
 
   * Note that for bigger _n_ the computations may be slow, or some computation steps may be timed out or the application can crash.
   * You may use the console of your browser by pressing F12 on the startup to get more information on the progress.
   * Some checked cases are duplicated because intersecting different diagonals may result in the same point.
-  * Some browsers are not working properly.
+  * The tool is not working properly in some browsers.

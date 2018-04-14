@@ -10,8 +10,7 @@
       textarea.emscripten { font-family: monospace; width: 80%; }
       .outer { display: table; position: absolute; height: 100%; width: 100%; }
       .middle { display: table-cell; vertical-align: middle; }
-      .inner { margin-left: auto; margin-right: auto; width: 1200px; }
-
+      .inner { margin-left: auto; margin-right: auto; width: 960px; }
     </style>
 </head>
 <body onload="go()">
@@ -30,8 +29,12 @@
 
   <script type='text/javascript'>
     function compute(inputString) { // compute a Giac command and return the output
-        caseval = Module.cwrap('caseval', 'string', ['string']);
-        return caseval(inputString);
+        var caseval = Module.cwrap('caseval', 'string', ['string']);
+        try {
+            return caseval(inputString);
+        } catch(err) {
+            errorOutput("Error during Giac computation on s=" + s);
+        }
     }
 
     // https://css-tricks.com/snippets/javascript/get-url-variables/
@@ -106,16 +109,6 @@
             }
             if (onlyX!=0) {
                 output("Considering only results d="+onlyX);
-                ratonly=0;
-            }
-
-            ratonly = getQueryVariable("r");
-            if (!ratonly) {
-                output("Assuming r=0 ('rationals only' is off), please append &r=1 to the URL to override");
-                ratonly=0;
-            }
-            if (ratonly==1 && onlyX==0) {
-                output("Considering only rational results");
             }
 
             mindegree = getQueryVariable("m");
@@ -136,9 +129,16 @@
                 symm=1;
             }
 
+            found = getQueryVariable("f");
+            if (!found) {
+                output("Not ignoring already found lengths, please append &f=1 to override");
+                found=0;
+            }
+
             sol = 0;
             notchecked = 0;
             startTime = new Date();
+            foundlist = [];
             output("s can be incremented until " + smax);
             e = getQueryVariable("e");
             if (e) {
@@ -171,11 +171,11 @@
         F = E_F_['b'];
         G = G_H_['a'];
         H = G_H_['b'];
-
-        console.log("A = " + A + ", B = " + B + ", C = " + C + ", D = " + D + ", E = " + E + ", F = " + F + ", G = " + G + ", H = " + H);
+        // console.log("A = " + A + ", B = " + B + ", C = " + C + ", D = " + D + ", E = " + E + ", F = " + F + ", G = " + G + ", H = " + H);
     }
 
     function CASinitCommands() {
+        compute("restart;");
         var factorsqrfree = "factorsqrfree(p):=begin local pf,r,ii; pf:=factor(p); if (sommet(pf)!='*') begin if (sommet(pf)=='^') return op(pf)[0]; else begin if (sommet(pf)!=sommet(-x)) return pf; else return factorsqrfree(-pf); end; end; opf:=op(pf); r:=1; for ii from 0 to size(opf)-1 do r:=r*factorsqrfree(opf[ii]); od return r end";
         var cos2piOverNMinpoly = "cos2piOverNMinpoly(n):=begin local j, p, q, r; p:=simplify((tchebyshev1(n)-1)/(x-1)); for j from 1 to n/2 do q:=tchebyshev1(j)-1; r:=gcd(p,q); p:=simplify(p/r); od; return factorsqrfree(primpart(p)); end";
         compute("caseval(\"init geogebra\");");
@@ -235,7 +235,10 @@
     function CAScomputeCurrent() {
         done = false;
         // c=cos(2pi/n)
-        console.log("CAS computes n=" + n + ", s=" + s);
+        console.log("n=" + n + ", s=" + s);
+        if (s%1000 == 0) {
+            output("Heartbeat: CAS is computing n=" + n + ", s=" + s);
+        }
         var c = compute("subst(cos2piOverNMinpoly(" + n + "),[x=c]);");
         // s=sin(2pi/n)
         var s_ = "s^2+c^2-1";
@@ -275,13 +278,15 @@
         var ideal=c+","+s_+","+p+","+d+","+q+","+r+","+qr;
         var eliminatecommand = "eliminate([" + ideal + "],[" + v + "]);";
         var eliminate = compute(eliminatecommand);
+        var normresultcommand = "expand(" + eliminate + ")/lcoeff(" + eliminate + ",d);"
+        var eliminate = compute(normresultcommand);
         var factorscommand = "factors(" + eliminate + ");";
         var factors = compute(factorscommand);
         var factor1command = factors + "[0][0]";
         var factor1 = compute(factor1command);
         // don't consider d=0
         if (factor1 != "d") {
-            var degreecommand = "degree(" + factors + "[0][0]);";
+            var degreecommand = "degree(" + factor1 +");";
             var degree = compute(degreecommand);
             var deg = Number(degree);
             var accepted = false;
@@ -289,23 +294,27 @@
             var factor;
             var solvecommand;
             var solve;
-            if (ratonly==0) {
-                accepted = (deg >= mindegree && deg <= maxdegree);
-            } else {
-                accepted = (deg == 1);
-            }
+            accepted = (deg >= mindegree && deg <= maxdegree);
             if (accepted) {
                 factorcommand = "factor(" + eliminate + ");";
                 factor = compute(factorcommand);
                 solvecommand = "solve([" + factor + "=0,d>0])";
                 solve = compute(solvecommand);
             }
-            if (onlyX!=0 && solve!="{{d="+onlyX+"}}") {
+            if (accepted && onlyX!=0 && solve!="{{d="+onlyX+"}}") {
                 accepted = false;
+            }
+            if (accepted && found==1) {
+                var founditem = false;
+                for (var i = 0; i < foundlist.length && !founditem; ++i)
+                    founditem = foundlist[i] == eliminate;
+                accepted = !founditem;
             }
             if (accepted) {
                 output("n=" + n + ", s=" + s + ": A=" + A + ", B=" + B + ", C=" + C +
-                    ", D=" + D + ", E=" + E + ", F=" + F + ", G=" + G + ", H=" + H + ": " + factor + ", " + solve);
+                    ", D=" + D + ", E=" + E + ", F=" + F + ", G=" + G + ", H=" + H + ": " + (eliminate + ", " +
+                    solve).replace(/d/g,"RS"));
+                foundlist.push(eliminate);
                 sol = sol + 1;
                 var lAB;
                 var lCD;
