@@ -141,6 +141,12 @@
                 found=0;
             }
 
+            approx = getQueryVariable("a");
+            bestapprox = Infinity;
+            if (!approx) {
+                approx=0;
+            }
+
             sol = 0;
             notchecked = 0;
             startTime = new Date();
@@ -263,9 +269,6 @@
         console.log("n=" + n + ", s=" + s);
         status_div.innerHTML = "Status: Computing n=" + n + ", s=" + s;
 
-        if (s%1000 == 0) {
-            output("Heartbeat: CAS is computing n=" + n + ", s=" + s);
-        }
         var c = compute("subst(cos2piOverNMinpoly(" + n + "),[x=c]);");
         // s=sin(2pi/n)
         var s_ = "s^2+c^2-1";
@@ -336,6 +339,20 @@
                 for (var i = 0; i < foundlist.length && !founditem; ++i)
                     founditem = foundlist[i] == eliminate;
                 accepted = !founditem;
+            }
+            if (accepted && approx!=0) {
+                accepted = false;
+                var fsolvecommand = "fsolve(" + factor1 + ")";
+                var fsolve = compute(fsolvecommand);
+                var rootlist = fsolve.substr(1, fsolve.length - 2);
+                var roots = rootlist.split(",");
+                for (var i = 0; i < roots.length; ++i) {
+                    if (Math.abs(Number(roots[i])-approx) < Math.abs(bestapprox-approx) && Number(roots[i]) != approx) {
+                        bestapprox = roots[i];
+                        output("Found better approximation: " + bestapprox);
+                        accepted = true;
+                    }
+                }
             }
             if (accepted) {
                 output("n=" + n + ", s=" + s + ": A=" + A + ", B=" + B + ", C=" + C +
