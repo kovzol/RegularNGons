@@ -234,7 +234,12 @@
         outputElapsedTime();
         output("Finished after finding "+sol+" solutions");
         output(notchecked+" cases were not checked to ignore symmetry");
+        hide_button();
+    }
 
+    function hide_button() {
+        var element = document.getElementById('start_stop');
+        element.hidden = true;
     }
 
     function output(text) {
@@ -260,6 +265,7 @@
     function errorOutput(text) {
         output(text);
         outputElapsedTime();
+        hide_button();
         throw(text);
     }
 
