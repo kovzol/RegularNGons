@@ -353,7 +353,7 @@
                 var rootlist = fsolve.substr(1, fsolve.length - 2);
                 var roots = rootlist.split(",");
                 for (var i = 0; i < roots.length; ++i) {
-                    if (Math.abs(Number(roots[i])-approx) < Math.abs(bestapprox-approx) && Number(roots[i]) != approx) {
+                    if (Math.abs(Number(roots[i])-approx) <= Math.abs(bestapprox-approx) && Number(roots[i]) != approx) {
                         bestapprox = roots[i];
                         output("Found better approximation: " + bestapprox);
                         accepted = true;

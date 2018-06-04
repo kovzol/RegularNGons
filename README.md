@@ -97,7 +97,10 @@ in an symmetrically equivalent position. When this is set, only
 the _A_=0, _B_ ≤ _n_/2 cases will be checked.
 
 When using _f_=1, once a length is found, no more results will be printed
-that have the same length.    
+that have the same length.
+
+The option _a_=... allows searching for an approximate value of the
+given parameter.    
 
 ## Examples
 
