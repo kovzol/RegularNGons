@@ -68,6 +68,7 @@
     }
 
     function go() {
+        epsilon = 0.01;
         n = getQueryVariable("n");
         status_div = document.getElementById('status');
         if (!n) errorOutput("Please append &n=... to the URL");
@@ -284,7 +285,7 @@
         var maxindex = Math.max(B,C,D,E,F,G,H);
         var v = "c,s,ax,ay,bx,b_y,cx,cy,dx,dy,ex,ey,fx,fy,gx,gy,hx,hy,qx,qy,rx,ry";
         // defining vertex points and segment endpoints
-        for (i=0; i<=maxindex; ++i) {
+        for (var i=0; i<=maxindex; ++i) {
             var px = "p" + i + "x";
             var py = "p" + i + "y";
             v += "," + px + "," + py;
@@ -314,8 +315,8 @@
         var ideal=c+","+s_+","+p+","+d+","+q+","+r+","+qr;
         var eliminatecommand = "eliminate([" + ideal + "],[" + v + "]);";
         var eliminate = compute(eliminatecommand);
-        var normresultcommand = "expand(" + eliminate + ")/lcoeff(" + eliminate + ",d);"
-        var eliminate = compute(normresultcommand);
+        var normresultcommand = "expand(" + eliminate + ")/lcoeff(" + eliminate + ",d);";
+        eliminate = compute(normresultcommand);
         var factorscommand = "factors(" + eliminate + ");";
         var factors = compute(factorscommand);
         var factor1command = factors + "[0][0]";
@@ -325,7 +326,7 @@
             var degreecommand = "degree(" + factor1 +");";
             var degree = compute(degreecommand);
             var deg = Number(degree);
-            var accepted = false;
+            var accepted;
             var factorcommand;
             var factor;
             var solvecommand;
@@ -424,7 +425,15 @@
                 var sRS = "RS_{"+sol+"}";
                 ggbApplet.evalCommand(sRS + "=Segment("+pR+","+pS+")");
                 ggbApplet.setLabelVisible(sRS, false);
-                ggbApplet.setColor(sRS, 0, 0, 64);
+                if (accepted && approx!=0) {
+                    var sRSlength = ggbApplet.getValue(sRS);
+                    if (Math.abs(sRSlength - bestapprox) > epsilon) {
+                        output("Geometrically non-matching case, consider looking for a star-regular variant");
+                        ggbApplet.setColor(sRS, 64, 0, 0);
+                    }
+                } else {
+                    ggbApplet.setColor(sRS, 0, 0, 64);
+                }
             }
         }
         done = true;
@@ -463,7 +472,7 @@
                   var oldLabel = String.fromCharCode(65+(i%24));
                   if (oldLabel == 'X') oldLabel = 'Z';
                   var index = Math.floor(i/24);
-                  if (index>0) {oldLabel += "_" + index};
+                  if (index>0) {oldLabel += "_" + index}
                   var newLabel = "A_{" + i + "}";
                   ggbApplet.renameObject(oldLabel, newLabel);
                   ggbApplet.setVisible(newLabel, false);
