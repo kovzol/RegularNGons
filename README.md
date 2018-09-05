@@ -102,7 +102,8 @@ that have the same length.
 The option _a_=... allows searching for an approximate value of the
 given parameter. By combining this with the option _E_=... the output
 can be somewhat filtered to have only the non-star-regular
-cases reported. By default _E_=0.01.
+cases reported if the numerical difference
+is below _E_. (By default _E_=Infinity.)
 
 The option _z_=... allows saving and retreiving results later by using
 an additional script. See the file [server.php](/server.php) for more

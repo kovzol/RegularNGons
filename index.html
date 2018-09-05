@@ -211,7 +211,7 @@
 
             epsilon = getQueryVariable("E");
             if (!epsilon) {
-                epsilon = 0.01;
+                epsilon = Infinity;
                 output("Assuming epsilon=" + epsilon + ", please append &E=... to the URL to override");
             }
 
@@ -462,10 +462,13 @@
                 var rootlist = fsolve.substr(1, fsolve.length - 2);
                 var roots = rootlist.split(",");
                 for (var i = 0; i < roots.length; ++i) {
-                    if (Math.abs(Number(roots[i]) - approx) <= Math.abs(bestapprox - approx) && Number(roots[i]) != approx) {
-                        bestapprox = roots[i];
-                        output("Found better approximation: " + bestapprox);
-                        accepted = true;
+                    var diff = Math.abs(Number(roots[i]) - approx);
+                    if (diff <= Math.abs(bestapprox - approx) && Number(roots[i]) != approx) {
+                        if (epsilon > diff) {
+                            bestapprox = roots[i];
+                            output("Found better approximation: " + bestapprox);
+                            accepted = true;
+                        }
                     }
                 }
             }
@@ -535,7 +538,7 @@
                 ggbApplet.setLabelVisible(sRS, false);
                 if (accepted && approx != 0) {
                     var sRSlength = ggbApplet.getValue(sRS);
-                    if (Math.abs(sRSlength - bestapprox) > epsilon) {
+                    if (Math.abs(sRSlength - bestapprox) > 0.01) {
                         output("Geometrically non-matching case, consider looking for a star-regular variant");
                         ggbApplet.setColor(sRS, 64, 0, 0);
                     }
