@@ -20,8 +20,8 @@
 
 $dbfile = "/tmp/RegularNGons.sqlite";
 if (!file_exists($dbfile)) {
-    fopen($dbfile, "w");
-    fclose($dbfile);
+    $f = fopen($dbfile, "w");
+    fclose($f);
     $db = new SQLite3($dbfile);
     $db->exec("CREATE TABLE clients (id text, parameters text, ggb text, log text, changes text)");
 } else {
