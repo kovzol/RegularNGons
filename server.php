@@ -6,6 +6,12 @@
  * php-sqlite3 to achieve that. You may want to enable mod_headers and set "Header set Access-Control-Allow-Origin *"
  * to allow direct communication between the client and a server even if they are installed on different machines.
  *
+ * Alternatively, a modern PHP IDE may also suffice. For example, PhpStorm (a commercial one) can be set up
+ * to use a php-cgi interpreter (e.g. the package php-cgi in Ubuntu), and then, after installing SQLITE3
+ * (the package php-sqlite3 in Ubuntu) and enabling it (in /etc/php/.../cgi/php.ini by uncommenting the
+ * setting for this extension), and finally restarting PhpStorm the internal PHP-CGI Server will take over
+ * all requirements.
+ *
  * Please note that this script writes to the file $dbfile defined at the beginning of the script (see below).
  * You can define a different path for that. The database schema will be created on the first run automatically.
  *
