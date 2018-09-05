@@ -1,38 +1,66 @@
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>
-    RegularNGons
-  </title>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        RegularNGons
+    </title>
     <style>
-      .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
-      textarea.emscripten { font-family: monospace; width: 80%; }
-      .outer { display: table; position: absolute; height: 100%; width: 100%; }
-      .middle { display: table-cell; vertical-align: middle; }
-      .inner { margin-left: auto; margin-right: auto; width: 960px; }
-      .center { text-align: center;}
+        .emscripten {
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+
+        textarea.emscripten {
+            font-family: monospace;
+            width: 80%;
+        }
+
+        .outer {
+            display: table;
+            position: absolute;
+            height: 100%;
+            width: 100%;
+        }
+
+        .middle {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .inner {
+            margin-left: auto;
+            margin-right: auto;
+            width: 960px;
+        }
+
+        .center {
+            text-align: center;
+        }
     </style>
 </head>
 <body onload="go()">
 
-  <div class="outer">
-      <div class="middle">
-          <div class="inner">
-              <div class="center">
+<div class="outer">
+    <div class="middle">
+        <div class="inner">
+            <div class="center">
                 <span id="status">Status: Initializing</span>
                 <button id="start_stop" disabled="true" onclick="start_stop_button()">Pause computations</button>
-              </div>
+            </div>
 
-              <textarea class="emscripten" id="output" rows="10" cols="80">Welcome to RegularNGons (https://github.com/kovzol/RegularNGons)...
-</textarea><br><div id="applet_container" class="emscripten"></div>
-          </div>
-      </div>
-  </div>
+            <textarea class="emscripten" id="output" rows="10" cols="80">Welcome to RegularNGons (https://github.com/kovzol/RegularNGons)...
+</textarea><br>
+            <div id="applet_container" class="emscripten"></div>
+        </div>
+    </div>
+</div>
 
-  <script type="text/javascript" src="https://cdn.geogebra.org/apps/deployggb.js"></script>
+<script type="text/javascript" src="https://cdn.geogebra.org/apps/deployggb.js"></script>
 
-  <script type='text/javascript'>
+<script type='text/javascript'>
 
     async function reload() {
         output("Attempt to restart page from this point again");
@@ -48,30 +76,31 @@
         var caseval = Module.cwrap('caseval', 'string', ['string']);
         try {
             return caseval(inputString);
-        } catch(err) {
+        } catch (err) {
             output("Error during Giac computation on s=" + s);
             reload();
         }
     }
 
     // https://css-tricks.com/snippets/javascript/get-url-variables/
-    function getQueryVariable(variable)
-    {
+    function getQueryVariable(variable) {
         var query = window.location.search.substring(1);
         var vars = query.split("&");
-        for (var i=0;i<vars.length;i++) {
+        for (var i = 0; i < vars.length; i++) {
             var pair = vars[i].split("=");
-            if(pair[0] == variable){return pair[1];}
+            if (pair[0] == variable) {
+                return pair[1];
+            }
         }
-        return(false);
+        return (false);
     }
 
     /* Compute the xth element among \binom{n}{2}.
      * (a,b) is a pair where 0<=a<b<N.
      */
-    function deserialize(x,N) {
-        var a=Math.floor(((2*N-1)-Math.sqrt((2*N-1)*(2*N-1)-8*x))/2);
-        var b=(2*x+a*a-(2*N-3)*a)/2+1;
+    function deserialize(x, N) {
+        var a = Math.floor(((2 * N - 1) - Math.sqrt((2 * N - 1) * (2 * N - 1) - 8 * x)) / 2);
+        var b = (2 * x + a * a - (2 * N - 3) * a) / 2 + 1;
         // console.log("deserialize(" + x + "," + N + ")=" + a+ "," + b);
         return {
             "a": a,
@@ -84,33 +113,34 @@
         n = getQueryVariable("n");
         status_div = document.getElementById('status');
         if (!n) errorOutput("Please append &n=... to the URL");
-        if (n<3) errorOutput("Invalid n: " + n + " (please use a number >= 3)");
-        ab = n*(n-1)/2;
-        cd = (ab-1)/2;
-        abcd = ab*cd;
-        efgh = (abcd-1)/2;
-        smax = abcd*efgh;
+        if (n < 3) errorOutput("Invalid n: " + n + " (please use a number >= 3)");
+        ab = n * (n - 1) / 2;
+        cd = (ab - 1) / 2;
+        abcd = ab * cd;
+        efgh = (abcd - 1) / 2;
+        smax = abcd * efgh;
         // on startup
         if (typeof s === 'undefined') {
             // Setup GeoGebra
             var parameters = {
-                "id":"ggbApplet",
-                "width":960,
-                "height":600,
-                "showToolBar":true,
-                "borderColor":null,
-                "showMenuBar":true,
-                "allowStyleBar":true,
-                "showAlgebraInput":false,
-                "enableLabelDrags":true,
-                "enableShiftDragZoom":true,
-                "capturingThreshold":null,
-                "showToolBarHelp":false,
-                "errorDialogsActive":true,
-                "showTutorialLink":true,
-                "showLogging":true,
-                "useBrowserForJS":false,
-                "perspective":"AG"};
+                "id": "ggbApplet",
+                "width": 960,
+                "height": 600,
+                "showToolBar": true,
+                "borderColor": null,
+                "showMenuBar": true,
+                "allowStyleBar": true,
+                "showAlgebraInput": false,
+                "enableLabelDrags": true,
+                "enableShiftDragZoom": true,
+                "capturingThreshold": null,
+                "showToolBarHelp": false,
+                "errorDialogsActive": true,
+                "showTutorialLink": true,
+                "showLogging": true,
+                "useBrowserForJS": false,
+                "perspective": "AG"
+            };
 
             var applet = new GGBApplet(parameters, '5.0', 'applet_container');
             applet.inject('applet_container');
@@ -118,52 +148,52 @@
             s = getQueryVariable("s");
             if (!s) {
                 output("Assuming s=0, please append &s=... to the URL to override");
-                s=0;
+                s = 0;
             }
             output("Starting with n=" + n + ", s=" + s);
 
             onlyX = getQueryVariable("u");
             if (!onlyX) {
-                onlyX=0;
+                onlyX = 0;
             }
-            if (onlyX!=0) {
-                output("Considering only results d="+onlyX);
+            if (onlyX != 0) {
+                output("Considering only results d=" + onlyX);
             }
 
             mindegree = getQueryVariable("m");
             if (!mindegree) {
                 output("Assuming mindegree=1, please append &m=... to the URL to override");
-                mindegree=1;
+                mindegree = 1;
             }
 
             maxdegree = getQueryVariable("M");
             if (!maxdegree) {
                 output("Assuming maxdegree=2, please append &M=... to the URL to override");
-                maxdegree=2;
+                maxdegree = 2;
             }
 
             symm = getQueryVariable("S");
             if (!symm) {
                 output("Not ignoring symmetry, please append &S=0 to the URL to ignore (this speeds up computation)");
-                symm=1;
+                symm = 1;
             }
 
             found = getQueryVariable("f");
             if (!found) {
                 output("Not ignoring already found lengths, please append &f=1 to override");
-                found=0;
+                found = 0;
             }
 
             approx = getQueryVariable("a");
             bestapprox = Infinity;
             if (!approx) {
-                approx=0;
+                approx = 0;
             }
 
             server = getQueryVariable("z");
             cont = getQueryVariable("c");
             if (!server) {
-                server="";
+                server = "";
             } else if (!cont) {
                 var query = window.location.search.substring(1);
                 server_id = post("action=register&parameters=" + encodeURIComponent(query));
@@ -171,7 +201,7 @@
             }
 
             if (!cont) {
-                cont="";
+                cont = "";
             } else {
                 cont_eval = post("action=continue&id=" + cont);
                 server_id = cont;
@@ -190,21 +220,21 @@
             }
             output("Waiting for the CAS...")
         }
-        if (s<0 || s>=smax) errorOutput("Invalid s: " + s);
+        if (s < 0 || s >= smax) errorOutput("Invalid s: " + s);
 
-        var segment = deserialize(s,abcd);
+        var segment = deserialize(s, abcd);
         var ABCD = segment['a'];
         var EFGH = segment['b'];
         var R = deserialize(ABCD, ab);
         var AB = R['a'];
         var CD = R['b'];
-        var A_B_ = deserialize(AB,n);
-        var C_D_ = deserialize(CD,n);
+        var A_B_ = deserialize(AB, n);
+        var C_D_ = deserialize(CD, n);
         var S = deserialize(EFGH, ab);
         var EF = S['a'];
         var GH = S['b'];
-        var E_F_ = deserialize(EF,n);
-        var G_H_ = deserialize(GH,n);
+        var E_F_ = deserialize(EF, n);
+        var G_H_ = deserialize(GH, n);
         A = A_B_['a'];
         B = A_B_['b'];
         C = C_D_['a'];
@@ -225,7 +255,6 @@
     }
 
     function heartbeat() {
-        var query = window.location.search.substring(1);
         var changes = "s=" + s + ";";
         changes += "foundlist=" + JSON.stringify(foundlist) + ";";
         changes += "sol=" + sol + ";";
@@ -269,36 +298,36 @@
         if (cont != "") {
             output("Attempt to continue a previous run...");
             eval(cont_eval);
-            ggb = ggb.replace(/ /g,"+");
+            ggb = ggb.replace(/ /g, "+");
             ggbApplet.setBase64(ggb);
-            if (!(typeof fulllog === 'undefined' )) {
-                var element = document.getElementById('output');
+            if (!(typeof fulllog === 'undefined')) {
+                element = document.getElementById('output');
                 var oldValue = element.value;
                 element.value = oldValue + fulllog;
                 element.scrollTop = 99999;
             }
         }
-        while (s<e-1) {
-            if (symm==1 || (A==0 && 2*B<=n)) {
+        while (s < e - 1) {
+            if (symm == 1 || (A == 0 && 2 * B <= n)) {
                 CAScomputeCurrent();
                 await sleep(1);
                 while (!running) {
                     await sleep(300);
-                    }
-                } else {
+                }
+            } else {
                 notchecked++;
             }
             s++;
             go();
-            if (server != "" && s%10000==0 && s>0) {
+            if (server != "" && s % 10000 == 0 && s > 0) {
                 output("Avoiding crash, normal restart...");
                 reload();
             }
         }
         CAScomputeCurrent();
         outputElapsedTime();
-        output("Finished after finding "+sol+" solutions");
-        output(notchecked+" cases were not checked to ignore symmetry");
+        output("Finished after finding " + sol + " solutions");
+        output(notchecked + " cases were not checked to ignore symmetry");
         hide_button();
     }
 
@@ -344,7 +373,7 @@
         // c=cos(2pi/n)
         console.log("n=" + n + ", s=" + s);
         status_div.innerHTML = "Status: Computing n=" + n + ", s=" + s;
-        if (server != "" && s>0 && s%100==0)
+        if (server != "" && s > 0 && s % 100 == 0)
             heartbeat();
 
         var c = compute("subst(cos2piOverNMinpoly(" + n + "),[x=c]);");
@@ -353,14 +382,14 @@
         var d = "0,"; // technical trick
         // P0=(0,0), P1=(1,0)
         var p = "p0x,p0y,p1x-1,p1y";
-        var maxindex = Math.max(B,C,D,E,F,G,H);
+        var maxindex = Math.max(B, C, D, E, F, G, H);
         var v = "c,s,ax,ay,bx,b_y,cx,cy,dx,dy,ex,ey,fx,fy,gx,gy,hx,hy,qx,qy,rx,ry";
         // defining vertex points and segment endpoints
-        for (var i=0; i<=maxindex; ++i) {
+        for (var i = 0; i <= maxindex; ++i) {
             var px = "p" + i + "x";
             var py = "p" + i + "y";
             v += "," + px + "," + py;
-            if (i>1) {
+            if (i > 1) {
                 var ppx = "p" + (i - 1) + "x";
                 var ppy = "p" + (i - 1) + "y";
                 var pppx = "p" + (i - 2) + "x";
@@ -368,22 +397,22 @@
                 p += ",-" + px + "-s*" + ppy + "+" + ppx + "+c*" + ppx + "+s*" + pppy + "-c*" + pppx;
                 p += ",-" + py + "+" + ppy + "+c*" + ppy + "+s*" + ppx + "-c*" + pppy + "-s*" + pppx;
             }
-            if (A==i) d += ",ax-" + px + ",ay-" + py;
-            if (B==i) d += ",bx-" + px + ",b_y-" + py;
-            if (C==i) d += ",cx-" + px + ",cy-" + py;
-            if (D==i) d += ",dx-" + px + ",dy-" + py;
-            if (E==i) d += ",ex-" + px + ",ey-" + py;
-            if (F==i) d += ",fx-" + px + ",fy-" + py;
-            if (G==i) d += ",gx-" + px + ",gy-" + py;
-            if (H==i) d += ",hx-" + px + ",hy-" + py;
+            if (A == i) d += ",ax-" + px + ",ay-" + py;
+            if (B == i) d += ",bx-" + px + ",b_y-" + py;
+            if (C == i) d += ",cx-" + px + ",cy-" + py;
+            if (D == i) d += ",dx-" + px + ",dy-" + py;
+            if (E == i) d += ",ex-" + px + ",ey-" + py;
+            if (F == i) d += ",fx-" + px + ",fy-" + py;
+            if (G == i) d += ",gx-" + px + ",gy-" + py;
+            if (H == i) d += ",hx-" + px + ",hy-" + py;
         }
         // AQB, CQD are collinear:
-        var q="ax*qy+qx*b_y+bx*ay-ax*b_y-qx*ay-bx*qy,cx*qy+qx*dy+dx*cy-cx*dy-qx*cy-dx*qy";
+        var q = "ax*qy+qx*b_y+bx*ay-ax*b_y-qx*ay-bx*qy,cx*qy+qx*dy+dx*cy-cx*dy-qx*cy-dx*qy";
         // ERF, GRH are collinear:
-        var r="ex*ry+rx*fy+fx*ey-ex*fy-rx*ey-fx*ry,gx*ry+rx*hy+hx*gy-gx*hy-rx*gy-hx*ry";
+        var r = "ex*ry+rx*fy+fx*ey-ex*fy-rx*ey-fx*ry,gx*ry+rx*hy+hx*gy-gx*hy-rx*gy-hx*ry";
         // the requested length is QR=d
-        var qr="d^2-(qx-rx)^2-(qy-ry)^2";
-        var ideal=c+","+s_+","+p+","+d+","+q+","+r+","+qr;
+        var qr = "d^2-(qx-rx)^2-(qy-ry)^2";
+        var ideal = c + "," + s_ + "," + p + "," + d + "," + q + "," + r + "," + qr;
         var eliminatecommand = "eliminate([" + ideal + "],[" + v + "]);";
         var eliminate = compute(eliminatecommand);
         var normresultcommand = "expand(" + eliminate + ")/lcoeff(" + eliminate + ",d);";
@@ -394,7 +423,7 @@
         var factor1 = compute(factor1command);
         // don't consider d=0
         if (factor1 != "d") {
-            var degreecommand = "degree(" + factor1 +");";
+            var degreecommand = "degree(" + factor1 + ");";
             var degree = compute(degreecommand);
             var deg = Number(degree);
             var accepted;
@@ -409,23 +438,23 @@
                 solvecommand = "solve([" + factor + "=0,d>0])";
                 solve = compute(solvecommand);
             }
-            if (accepted && onlyX!=0 && solve!="{{d="+onlyX+"}}") {
+            if (accepted && onlyX != 0 && solve != "{{d=" + onlyX + "}}") {
                 accepted = false;
             }
-            if (accepted && found==1) {
+            if (accepted && found == 1) {
                 var founditem = false;
                 for (var i = 0; i < foundlist.length && !founditem; ++i)
                     founditem = foundlist[i] == eliminate;
                 accepted = !founditem;
             }
-            if (accepted && approx!=0) {
+            if (accepted && approx != 0) {
                 accepted = false;
                 var fsolvecommand = "fsolve(" + factor1 + ")";
                 var fsolve = compute(fsolvecommand);
                 var rootlist = fsolve.substr(1, fsolve.length - 2);
                 var roots = rootlist.split(",");
                 for (var i = 0; i < roots.length; ++i) {
-                    if (Math.abs(Number(roots[i])-approx) <= Math.abs(bestapprox-approx) && Number(roots[i]) != approx) {
+                    if (Math.abs(Number(roots[i]) - approx) <= Math.abs(bestapprox - approx) && Number(roots[i]) != approx) {
                         bestapprox = roots[i];
                         output("Found better approximation: " + bestapprox);
                         accepted = true;
@@ -435,36 +464,36 @@
             if (accepted) {
                 output("n=" + n + ", s=" + s + ": A=" + A + ", B=" + B + ", C=" + C +
                     ", D=" + D + ", E=" + E + ", F=" + F + ", G=" + G + ", H=" + H + ": " + (eliminate + ", " +
-                    solve).replace(/d/g,"RS"));
+                        solve).replace(/d/g, "RS"));
                 foundlist.push(eliminate);
                 sol = sol + 1;
                 var lAB;
                 var lCD;
                 var lEF;
                 var lGH;
-                if (A<B) lAB=A + "," + B; else lAB = B + "," + A;
-                var ld = "l_{"+lAB+"}";
+                if (A < B) lAB = A + "," + B; else lAB = B + "," + A;
+                var ld = "l_{" + lAB + "}";
                 if (!ggbApplet.exists(ld)) {
                     ggbApplet.evalCommand(ld + "=Line(A_{" + A + "},A_{" + B + "})");
                     ggbApplet.setColor(ld, 192, 192, 192);
                     ggbApplet.setLabelVisible(ld, false);
                 }
-                if (C<D) lCD=C + "," + D; else lCD = D + "," + C;
-                var le = "l_{"+lCD+"}";
+                if (C < D) lCD = C + "," + D; else lCD = D + "," + C;
+                var le = "l_{" + lCD + "}";
                 if (!ggbApplet.exists(le)) {
                     ggbApplet.evalCommand(le + "=Line(A_{" + C + "},A_{" + D + "})");
                     ggbApplet.setColor(le, 192, 192, 192);
                     ggbApplet.setLabelVisible(le, false);
                 }
-                if (E<F) lEF=E + "," + F; else lEF = E + "," + F;
-                var lf = "l_{"+lEF+"}";
+                if (E < F) lEF = E + "," + F; else lEF = E + "," + F;
+                var lf = "l_{" + lEF + "}";
                 if (!ggbApplet.exists(lf)) {
                     ggbApplet.evalCommand(lf + "=Line(A_{" + E + "},A_{" + F + "})");
                     ggbApplet.setColor(lf, 192, 192, 192);
                     ggbApplet.setLabelVisible(lf, false);
                 }
-                if (G<H) lGH=G + "," + H; else lGH = H + "," + H;
-                var lg = "l_{"+lGH+"}";
+                if (G < H) lGH = G + "," + H; else lGH = H + "," + H;
+                var lg = "l_{" + lGH + "}";
                 if (!ggbApplet.exists(lg)) {
                     ggbApplet.evalCommand(lg + "=Line(A_{" + G + "},A_{" + H + "})");
                     ggbApplet.setColor(lg, 192, 192, 192);
@@ -479,7 +508,7 @@
                 else {
                     pR = pR1;
                     ggbApplet.evalCommand(pR + "=Intersect(" + ld + "," + le + ")");
-                    ggbApplet.setVisible(pR,false);
+                    ggbApplet.setVisible(pR, false);
                 }
 
                 var pS1 = "S_{" + lEF + "," + lGH + "}";
@@ -490,13 +519,13 @@
                 else {
                     pS = pS1;
                     ggbApplet.evalCommand(pS + "=Intersect(" + lf + "," + lg + ")");
-                    ggbApplet.setVisible(pS,false);
+                    ggbApplet.setVisible(pS, false);
                 }
 
-                var sRS = "RS_{"+sol+"}";
-                ggbApplet.evalCommand(sRS + "=Segment("+pR+","+pS+")");
+                var sRS = "RS_{" + sol + "}";
+                ggbApplet.evalCommand(sRS + "=Segment(" + pR + "," + pS + ")");
                 ggbApplet.setLabelVisible(sRS, false);
-                if (accepted && approx!=0) {
+                if (accepted && approx != 0) {
                     var sRSlength = ggbApplet.getValue(sRS);
                     if (Math.abs(sRSlength - bestapprox) > epsilon) {
                         output("Geometrically non-matching case, consider looking for a star-regular variant");
@@ -510,57 +539,58 @@
         done = true;
     }
 
-    </script>
+</script>
 
-  <script type='text/javascript'>
-      var Module = {
+<script type='text/javascript'>
+    var Module = {
         preRun: [],
         postRun: [],
-        printErr: function(text) {
-          if (0) { // XXX disabled for safety typeof dump == 'function') {
-            dump(text + '\n'); // fast, straight to the real console
-          } else {
-            console.log(text);
-          }
+        printErr: function (text) {
+            if (0) { // XXX disabled for safety typeof dump == 'function') {
+                dump(text + '\n'); // fast, straight to the real console
+            } else {
+                console.log(text);
+            }
         },
-        setStatus: function(text) {
-          if (Module.setStatus.interval) clearInterval(Module.setStatus.interval);
-          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
-          if (m) text = m[1];
-          console.log("Giac status = " + text);
-          if (text == "") { // ready to go
-              outputElapsedTime();
-              output("...CAS is up and running");
-              output("Setting up GeoGebra applet");
-              ggbApplet.setCustomToolBar("0|14");
-              // ggbApplet.setAxesVisible(false,false);
-              ggbApplet.setAxesVisible(1,false,false,false);
-              ggbApplet.evalCommand("A=(0,0)");
-              ggbApplet.evalCommand("B=(1,0)");
-              ggbApplet.evalCommand("poly1=Polygon(A,B,"+n+")");
-              ggbApplet.setLabelVisible("poly1", false);
-              for (i=0; i<n; ++i) {
-                  var oldLabel = String.fromCharCode(65+(i%24));
-                  if (oldLabel == 'X') oldLabel = 'Z';
-                  var index = Math.floor(i/24);
-                  if (index>0) {oldLabel += "_" + index}
-                  var newLabel = "A_{" + i + "}";
-                  ggbApplet.renameObject(oldLabel, newLabel);
-                  ggbApplet.setVisible(newLabel, false);
-              }
-              doCAScomputation();
-          }
+        setStatus: function (text) {
+            if (Module.setStatus.interval) clearInterval(Module.setStatus.interval);
+            var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+            if (m) text = m[1];
+            console.log("Giac status = " + text);
+            if (text == "") { // ready to go
+                outputElapsedTime();
+                output("...CAS is up and running");
+                output("Setting up GeoGebra applet");
+                ggbApplet.setCustomToolBar("0|14");
+                // ggbApplet.setAxesVisible(false,false);
+                ggbApplet.setAxesVisible(1, false, false, false);
+                ggbApplet.evalCommand("A=(0,0)");
+                ggbApplet.evalCommand("B=(1,0)");
+                ggbApplet.evalCommand("poly1=Polygon(A,B," + n + ")");
+                ggbApplet.setLabelVisible("poly1", false);
+                for (i = 0; i < n; ++i) {
+                    var oldLabel = String.fromCharCode(65 + (i % 24));
+                    if (oldLabel == 'X') oldLabel = 'Z';
+                    var index = Math.floor(i / 24);
+                    if (index > 0) {
+                        oldLabel += "_" + index
+                    }
+                    var newLabel = "A_{" + i + "}";
+                    ggbApplet.renameObject(oldLabel, newLabel);
+                    ggbApplet.setVisible(newLabel, false);
+                }
+                doCAScomputation();
+            }
         },
         totalDependencies: 0,
-        monitorRunDependencies: function(left) {
-          this.totalDependencies = Math.max(this.totalDependencies, left);
-          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+        monitorRunDependencies: function (left) {
+            this.totalDependencies = Math.max(this.totalDependencies, left);
+            Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
         }
-      };
-      Module.setStatus('Downloading...');
-    </script>
-  <script src="giac.js"></script>
+    };
+    Module.setStatus('Downloading...');
+</script>
+<script src="giac.js"></script>
 
 </body>
 </html>
-
