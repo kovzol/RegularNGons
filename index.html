@@ -196,6 +196,9 @@
             } else if (!cont) {
                 var query = window.location.search.substring(1);
                 server_id = post("action=register&parameters=" + encodeURIComponent(query));
+                if (server_id.length != 7) {
+                    errorOutput("Server communication to " + server + " seems not working");
+                }
                 output("Obtained job ID " + server_id);
             }
 
