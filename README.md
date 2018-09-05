@@ -100,7 +100,11 @@ When using _f_=1, once a length is found, no more results will be printed
 that have the same length.
 
 The option _a_=... allows searching for an approximate value of the
-given parameter.    
+given parameter.
+
+The option _z_=... allows saving and retreiving results later by using
+an additional script. See the file [server.php](/server.php) for more
+details.    
 
 ## Examples
 
@@ -113,6 +117,7 @@ The following theorems have been found by using **RegularNGons**:
 ## Known issues and workarounds
 
   * Note that for bigger _n_ the computations may be slow, or some computation steps may be timed out or the application can crash.
+    This can be avoided partly by using the _z_=... option.
   * You may use the console of your browser by pressing F12 on the startup to get more information on the progress.
   * Some checked cases are duplicated because intersecting different diagonals may result in the same point.
   * The tool is not working properly in some browsers.

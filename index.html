@@ -33,12 +33,24 @@
   <script type="text/javascript" src="https://cdn.geogebra.org/apps/deployggb.js"></script>
 
   <script type='text/javascript'>
+
+    async function reload() {
+        output("Attempt to restart page from this point again");
+        outputElapsedTime();
+        var url = window.location.href;
+        if (cont == "")
+            url += '&c=' + server_id;
+        await sleep(5000);
+        window.location.href = url;
+    }
+
     function compute(inputString) { // compute a Giac command and return the output
         var caseval = Module.cwrap('caseval', 'string', ['string']);
         try {
             return caseval(inputString);
         } catch(err) {
-            errorOutput("Error during Giac computation on s=" + s);
+            output("Error during Giac computation on s=" + s);
+            reload();
         }
     }
 
@@ -148,6 +160,23 @@
                 approx=0;
             }
 
+            server = getQueryVariable("z");
+            cont = getQueryVariable("c");
+            if (!server) {
+                server="";
+            } else if (!cont) {
+                var query = window.location.search.substring(1);
+                server_id = post("action=register&parameters=" + encodeURIComponent(query));
+                output("Obtained job ID " + server_id);
+            }
+
+            if (!cont) {
+                cont="";
+            } else {
+                cont_eval = post("action=continue&id=" + cont);
+                server_id = cont;
+            }
+
             sol = 0;
             notchecked = 0;
             startTime = new Date();
@@ -187,6 +216,25 @@
         // console.log("A = " + A + ", B = " + B + ", C = " + C + ", D = " + D + ", E = " + E + ", F = " + F + ", G = " + G + ", H = " + H);
     }
 
+    function post(message) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", server, false);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send(message);
+        return xhttp.responseText;
+    }
+
+    function heartbeat() {
+        var query = window.location.search.substring(1);
+        var changes = "s=" + s + ";";
+        changes += "foundlist=" + JSON.stringify(foundlist) + ";";
+        changes += "sol=" + sol + ";";
+        changes += "bestapprox=" + bestapprox + ";";
+        changes += "startTime=new Date(" + JSON.stringify(startTime) + ");";
+        post("action=heartbeat&id=" + server_id + "&changes=" + encodeURIComponent(changes));
+
+    }
+
     function CASinitCommands() {
         compute("restart;");
         var factorsqrfree = "factorsqrfree(p):=begin local pf,r,ii; pf:=factor(p); if (sommet(pf)!='*') begin if (sommet(pf)=='^') return op(pf)[0]; else begin if (sommet(pf)!=sommet(-x)) return pf; else return factorsqrfree(-pf); end; end; opf:=op(pf); r:=1; for ii from 0 to size(opf)-1 do r:=r*factorsqrfree(opf[ii]); od return r end";
@@ -218,6 +266,18 @@
         var element = document.getElementById('start_stop');
         element.disabled = false;
         CASinitCommands();
+        if (cont != "") {
+            output("Attempt to continue a previous run...");
+            eval(cont_eval);
+            ggb = ggb.replace(/ /g,"+");
+            ggbApplet.setBase64(ggb);
+            if (!(typeof fulllog === 'undefined' )) {
+                var element = document.getElementById('output');
+                var oldValue = element.value;
+                element.value = oldValue + fulllog;
+                element.scrollTop = 99999;
+            }
+        }
         while (s<e-1) {
             if (symm==1 || (A==0 && 2*B<=n)) {
                 CAScomputeCurrent();
@@ -230,6 +290,10 @@
             }
             s++;
             go();
+            if (server != "" && s%10000==0 && s>0) {
+                output("Avoiding crash, normal restart...");
+                reload();
+            }
         }
         CAScomputeCurrent();
         outputElapsedTime();
@@ -249,6 +313,11 @@
         var oldValue = element.value;
         element.value = oldValue + text + "\n";
         element.scrollTop = 99999;
+        if (typeof ggbApplet != 'undefined' && server != "") {
+            post("action=update&id=" + server_id + "&update=" + text + "&ggb=" +
+                encodeURIComponent(ggbApplet.getBase64()));
+        }
+
     }
 
     function outputElapsedTime() {
@@ -275,6 +344,8 @@
         // c=cos(2pi/n)
         console.log("n=" + n + ", s=" + s);
         status_div.innerHTML = "Status: Computing n=" + n + ", s=" + s;
+        if (server != "" && s>0 && s%100==0)
+            heartbeat();
 
         var c = compute("subst(cos2piOverNMinpoly(" + n + "),[x=c]);");
         // s=sin(2pi/n)
