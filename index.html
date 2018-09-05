@@ -109,7 +109,6 @@
     }
 
     function go() {
-        epsilon = 0.01;
         n = getQueryVariable("n");
         status_div = document.getElementById('status');
         if (!n) errorOutput("Please append &n=... to the URL");
@@ -205,6 +204,12 @@
             } else {
                 cont_eval = post("action=continue&id=" + cont);
                 server_id = cont;
+            }
+
+            epsilon = getQueryVariable("E");
+            if (!epsilon) {
+                epsilon = 0.01;
+                output("Assuming epsilon=" + epsilon + ", please append &E=... to the URL to override");
             }
 
             sol = 0;
